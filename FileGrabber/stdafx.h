@@ -19,3 +19,11 @@
 
 
 // 在此处引用程序需要的其他标头
+#include <string>
+namespace std {
+#ifdef UNICODE
+	typedef wstring _tstring;
+#else
+	typedef string _tstring;
+#endif
+}

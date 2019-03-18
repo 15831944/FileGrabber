@@ -14,8 +14,8 @@ WCHAR szWindowClass[MAX_LOADSTRING];
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
-void DeviceArrivalMain(char DriveLetter);
-void DeviceRemovalMain(char DriveLetter);
+void DeviceArrivalMain(TCHAR DriveLetter);
+void DeviceRemovalMain(TCHAR DriveLetter);
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -24,7 +24,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 {
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
-
+	
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
     LoadStringW(hInstance, IDC_FILEGRABBER, szWindowClass, MAX_LOADSTRING);
     MyRegisterClass(hInstance);
@@ -103,9 +103,9 @@ void RegisterDeviceNotify(HWND hWnd)
 	hDevNotify = RegisterDeviceNotification(hWnd, &NotificationFilter, DEVICE_NOTIFY_WINDOW_HANDLE);
 }
 
-char FirstDriveFromMask(ULONG unitmask)
+TCHAR FirstDriveFromMask(ULONG unitmask)
 {
-	char i;
+	TCHAR i;
 
 	for (i = 0; i < 26; ++i)
 	{
@@ -114,7 +114,7 @@ char FirstDriveFromMask(ULONG unitmask)
 		unitmask >>= 1;
 	}
 
-	return (i + 'A');
+	return (i + TEXT('A'));
 }
 
 LRESULT DeviceChange(UINT message, WPARAM wParam, LPARAM lParam)
@@ -125,7 +125,7 @@ LRESULT DeviceChange(UINT message, WPARAM wParam, LPARAM lParam)
 		if (pHdr->dbch_devicetype == DBT_DEVTYP_VOLUME)
 		{
 			PDEV_BROADCAST_VOLUME pDevVolume = (PDEV_BROADCAST_VOLUME)lParam;
-			char driverLabel = FirstDriveFromMask(pDevVolume->dbcv_unitmask);
+			TCHAR driverLabel = FirstDriveFromMask(pDevVolume->dbcv_unitmask);
 			if (wParam == DBT_DEVICEARRIVAL) {
 				DeviceArrivalMain(driverLabel);
 			}

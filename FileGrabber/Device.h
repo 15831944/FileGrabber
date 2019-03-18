@@ -3,27 +3,27 @@
 class Device
 {
 public:
-	Device(char diskLabel);
+	Device(TCHAR diskLabel);
 	enum class DiskStatus {
 		OK,
 		INVALID
 	};
 	struct DiskInformation {
-		char DriveLetter;
-		std::wstring Label;
-		unsigned int TotalSpace;
-		unsigned int UsedSpace;
-		unsigned int FreeSpace;
-		std::wstring FileSystem;
-		std::wstring DiskSerialNumber;
+		TCHAR DriveLetter;
+		std::_tstring Label;
+		unsigned long long TotalSpace;
+		unsigned long long FreeSpaceToCaller;
+		unsigned long long FreeSpace;
+		std::_tstring FileSystem;
+		DWORD FileSystemFlags;
+		DWORD VolumeSerialNumber;
 	};
-	inline char GetDiskLabel() const;
+	inline TCHAR GetDiskLabel() const;
 	inline void SetDiskStatus(DiskStatus ds);
-	inline void GetDiskStatus() const;
-	const DiskInformation& GetDiskInformation();
+	inline DiskStatus GetDiskStatus() const;
+	DiskInformation GetDiskInformation();
 protected:
-	DiskInformation ReadDiskInformation() const;
-	DiskInformation diskInformation;
 	DiskStatus diskStatus;
+	TCHAR diskLabel;
 };
 
