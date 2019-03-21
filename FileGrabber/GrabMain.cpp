@@ -13,12 +13,16 @@ void DeviceArrivalMain(TCHAR DriveLetter) {
 	wstring filename;
 	wstringstream ss;
 	
-	ss << info.Label << L" - " << st.wYear << L"-" << st.wMonth << L"-" << st.wDay << L"_" << setw(2) << setfill(L'0') << st.wHour << L"." << st.wMinute << L"." << st.wSecond;
+	ss << st.wYear << L"-" << st.wMonth << L"-" << st.wDay << L"_" << setw(2) << setfill(L'0') << st.wHour << L"." << st.wMinute << L"." << st.wSecond;
 	getline(ss, filename);
 	wstring ws = filename + L".ige";
+
 	FILE* file = _wfopen(ws.c_str(), L"w");
-	fwprintf(file, L"Drive Letter: %c\nLabel: %s\nSN: %ld\nFileSystem: %s\nSpace: %lld", info.DriveLetter, info.Label.c_str(),
+	const wchar_t* label = info.Label.c_str();
+	_wsetlocale(0, L"chs");
+	fwprintf(file, L"Drive Letter: %c\nLabel: %s\nSN: %lu\nFileSystem: %s\nSpace: %llu", info.DriveLetter, label,
 		info.VolumeSerialNumber, info.FileSystem.c_str(), info.TotalSpace);
+
 	fclose(file);
 }
 
