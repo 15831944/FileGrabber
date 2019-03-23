@@ -30,6 +30,12 @@
     <ClInclude Include="Device.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Convert.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FileLister.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -42,6 +48,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Device.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Convert.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="FileLister.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

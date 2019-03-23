@@ -4,6 +4,7 @@ class Device
 {
 public:
 	Device(TCHAR diskLabel);
+	Device();
 	enum class DiskStatus {
 		OK,
 		INVALID
@@ -18,9 +19,9 @@ public:
 		DWORD FileSystemFlags;
 		DWORD VolumeSerialNumber;
 	};
-	inline TCHAR GetDiskLabel() const;
-	inline void SetDiskStatus(DiskStatus ds);
-	inline DiskStatus GetDiskStatus() const;
+	TCHAR GetDiskLabel() const;
+	void SetDiskStatus(DiskStatus ds);
+	DiskStatus GetDiskStatus() const;
 	DiskInformation GetDiskInformation();
 protected:
 	DiskStatus diskStatus;

@@ -4,6 +4,8 @@
 #include "stdafx.h"
 #include "FileGrabber.h"
 #include <Dbt.h>
+#include "Convert.h"
+using namespace std;
 
 #define MAX_LOADSTRING 100
 
@@ -14,17 +16,23 @@ WCHAR szWindowClass[MAX_LOADSTRING];
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
+BOOL CheckSingleInstance(LPCTSTR pszUniqueName);
 void DeviceArrivalMain(TCHAR DriveLetter);
 void DeviceRemovalMain(TCHAR DriveLetter);
 
-int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
+int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
-                     _In_ LPWSTR    lpCmdLine,
+                     _In_ LPTSTR    lpCmdLine,
                      _In_ int       nCmdShow)
 {
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 	
+	if (CheckSingleInstance(TEXT("Global\\82ECF125A20C4C6C91959A89D5F34E36")) == FALSE) {
+		MessageBox(NULL, TEXT("Only one instance can be run at a time."), TEXT("FileGrabber - Error"), MB_ICONERROR);
+		return 0;
+	}
+
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
     LoadStringW(hInstance, IDC_FILEGRABBER, szWindowClass, MAX_LOADSTRING);
     MyRegisterClass(hInstance);
@@ -87,6 +95,25 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    //UpdateWindow(hWnd);
 
    return TRUE;
+}
+
+BOOL CheckSingleInstance(LPCTSTR pszUniqueName) {
+	HANDLE hMutex = CreateEvent(NULL, TRUE, FALSE, pszUniqueName);
+	DWORD dwLstErr = GetLastError();
+	BOOL bOneInstanceCheck = TRUE;
+
+	if (hMutex) {
+		if (dwLstErr == ERROR_ALREADY_EXISTS) {
+			CloseHandle(hMutex);
+			bOneInstanceCheck = FALSE;
+		}
+	}
+	else {
+		if (dwLstErr == ERROR_ACCESS_DENIED)
+			bOneInstanceCheck = FALSE;
+	}
+
+	return bOneInstanceCheck;
 }
 
 static const GUID GUID_DEVINTERFACE_USB_DEVICE =

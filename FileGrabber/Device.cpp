@@ -7,17 +7,23 @@ Device::Device(TCHAR diskLabel)
 	this->diskStatus = DiskStatus::OK;
 }
 
-inline TCHAR Device::GetDiskLabel() const
+Device::Device()
+{
+	this->diskLabel = 0;
+	this->diskStatus = DiskStatus::INVALID;
+}
+
+TCHAR Device::GetDiskLabel() const
 {
 	return this->diskLabel;
 }
 
-inline void Device::SetDiskStatus(DiskStatus ds)
+void Device::SetDiskStatus(DiskStatus ds)
 {
 	this->diskStatus = ds;
 }
 
-inline Device::DiskStatus Device::GetDiskStatus() const
+Device::DiskStatus Device::GetDiskStatus() const
 {
 	return this->diskStatus;
 }
@@ -25,6 +31,9 @@ inline Device::DiskStatus Device::GetDiskStatus() const
 Device::DiskInformation Device::GetDiskInformation()
 {
 	DiskInformation info;
+	if (this->diskStatus == DiskStatus::INVALID) {
+		return info;
+	}
 	TCHAR path[3] = { this->diskLabel,TEXT(':'),TEXT('\0') };
 	TCHAR VolumeName[255];
 	DWORD VolumeSerialNumber, MaximumComponentLength, FileSystemFlags;
