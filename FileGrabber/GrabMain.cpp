@@ -25,6 +25,8 @@ void DeviceArrivalMain(TCHAR DriveLetter) {
 	wstring filename;
 	getline(ss, filename);
 	FILE* file = _wfopen(filename.c_str(), L"w");
+	fwprintf(file, L"Basic Information\n--------------------------\nDrive Letter: %c\nLabel: %s\nSN: %lu\nFileSystem: %s\nSpace: %llu\n\nFile List\n--------------------------\n",
+		info.DriveLetter, info.Label.c_str(), info.VolumeSerialNumber, info.FileSystem.c_str(), info.TotalSpace);
 	for (list<FileLister::FileData>::const_iterator it = pls->cbegin(); it != pls->cend();++it) {
 		fwprintf(file, L"%s/%s\n", it->Dictionary, it->name);
 	}

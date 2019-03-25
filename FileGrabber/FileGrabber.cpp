@@ -19,6 +19,7 @@ LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 BOOL CheckSingleInstance(LPCTSTR pszUniqueName);
 void DeviceArrivalMain(TCHAR DriveLetter);
 void DeviceRemovalMain(TCHAR DriveLetter);
+void PostProgramStartMessage(HWND hWnd);
 
 int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -168,10 +169,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
+	case WM_CREATE:
+		PostProgramStartMessage(hWnd);
+		break;
 	case WM_DEVICECHANGE:
 		return DeviceChange(message, wParam, lParam);
-    default:
-        return DefWindowProc(hWnd, message, wParam, lParam);
     }
-    return 0;
+	return DefWindowProc(hWnd, message, wParam, lParam);
 }
