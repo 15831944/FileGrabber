@@ -31,3 +31,7 @@ namespace std {
 typedef unsigned int uint;
 typedef long long int64;
 typedef unsigned long long uint64;
+
+#define WM_NOTIFYMSG				WM_USER
+#define IDN_SERVICE					1501
+#define IDN_EXIT					1502

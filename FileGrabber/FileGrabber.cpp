@@ -12,6 +12,7 @@ using namespace std;
 HINSTANCE hInst;                                
 WCHAR szTitle[MAX_LOADSTRING];                  
 WCHAR szWindowClass[MAX_LOADSTRING];          
+extern bool IsServiceOn;
 
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
@@ -19,7 +20,7 @@ LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 BOOL CheckSingleInstance(LPCTSTR pszUniqueName);
 void DeviceArrivalMain(TCHAR DriveLetter);
 void DeviceRemovalMain(TCHAR DriveLetter);
-void PostProgramStartMessage(HWND hWnd);
+void PostProgramStartMessage(HWND hWnd, NOTIFYICONDATA &nid);
 
 int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -167,13 +168,50 @@ LRESULT DeviceChange(UINT message, WPARAM wParam, LPARAM lParam)
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+	static HMENU hNotifyMenu = NULL;
+	static NOTIFYICONDATA nid;
     switch (message)
     {
 	case WM_CREATE:
-		PostProgramStartMessage(hWnd);
+		hNotifyMenu = CreatePopupMenu();
+		AppendMenu(hNotifyMenu, MF_STRING, IDN_SERVICE, TEXT("Stop Service"));
+		AppendMenu(hNotifyMenu, MF_STRING, IDN_EXIT, TEXT("Exit"));
+		PostProgramStartMessage(hWnd, nid);
+		break;
+	case WM_NOTIFYMSG:
+		if (lParam == WM_RBUTTONDOWN) {
+			POINT pt;
+			GetCursorPos(&pt);
+			int res = TrackPopupMenu(hNotifyMenu, TPM_RETURNCMD, pt.x, pt.y, NULL, hWnd, NULL);
+			switch (res) {
+			case IDN_EXIT:
+				Shell_NotifyIcon(NIM_DELETE, &nid);
+				exit(0);
+				break;
+			case IDN_SERVICE:
+				if (IsServiceOn) {
+					IsServiceOn = false;
+					hNotifyMenu = CreatePopupMenu();
+					AppendMenu(hNotifyMenu, MF_STRING, IDN_SERVICE, TEXT("Start Service"));
+					AppendMenu(hNotifyMenu, MF_STRING, IDN_EXIT, TEXT("Exit"));
+				}
+				else {
+					IsServiceOn = true;
+					hNotifyMenu = CreatePopupMenu();
+					AppendMenu(hNotifyMenu, MF_STRING, IDN_SERVICE, TEXT("Stop Service"));
+					AppendMenu(hNotifyMenu, MF_STRING, IDN_EXIT, TEXT("Exit"));
+				}
+				break;
+			}
+		}
 		break;
 	case WM_DEVICECHANGE:
-		return DeviceChange(message, wParam, lParam);
+		if (IsServiceOn) {
+			return DeviceChange(message, wParam, lParam);
+		}
+		else {
+			break;
+		}
     }
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }

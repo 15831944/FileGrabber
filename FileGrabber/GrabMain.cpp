@@ -9,6 +9,8 @@
 #include "FileLister.h"
 using namespace std;
 
+bool IsServiceOn = true;
+
 void DeviceArrivalMain(TCHAR DriveLetter) {
 	Device dv(DriveLetter);
 	Device::DiskInformation info = dv.GetDiskInformation();
