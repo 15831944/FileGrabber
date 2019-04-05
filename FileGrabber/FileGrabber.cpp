@@ -6,7 +6,7 @@
 #include <Dbt.h>
 #include "Convert.h"
 #include "NotifyDataManager.h"
-#include "RSAEncrypt.h"
+#include "AESKey.h"
 using namespace std;
 
 #define MAX_LOADSTRING 100
@@ -36,9 +36,11 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		return 0;
 	}
 
-	RSAEncrypt::GenerateRSAKeyFile("E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\pri.pem", "E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\pub.pub");
-	RSAEncrypt enc("E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\pub.pub");
-	enc.Encrypt("E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\p.mp4", "E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\test.ief");
+	AESKey::GenerateRSAEncryptionFile("E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\pub.pub", "E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\pri.pem");
+	AESKey key;
+	key.WriteAESKey("E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\aes.key", "E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\pub.pub");
+	//RSAEncrypt enc("E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\pub.pub");
+	//enc.Encrypt("E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\p.mp4", "E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\test.ief");
 
     LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
     LoadString(hInstance, IDC_FILEGRABBER, szWindowClass, MAX_LOADSTRING);

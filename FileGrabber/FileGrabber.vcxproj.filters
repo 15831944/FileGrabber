@@ -39,7 +39,7 @@
     <ClInclude Include="NotifyDataManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="RSAEncrypt.h">
+    <ClInclude Include="AESKey.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -65,7 +65,7 @@
     <ClCompile Include="NotifyDataManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="RSAEncrypt.cpp">
+    <ClCompile Include="AESKey.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
