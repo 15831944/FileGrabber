@@ -22,7 +22,6 @@ LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 BOOL CheckSingleInstance(LPCTSTR pszUniqueName);
 void DeviceArrivalMain(TCHAR DriveLetter);
 void DeviceRemovalMain(TCHAR DriveLetter);
-void PostProgramStartMessage(HWND hWnd, NOTIFYICONDATA &nid);
 
 int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -37,10 +36,12 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		return 0;
 	}
 
-	//RSAEncrypt::GenerateRSAKeyFile("pub.pub", "pri.pem");
+	RSAEncrypt::GenerateRSAKeyFile("E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\pri.pem", "E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\pub.pub");
+	RSAEncrypt enc("E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\pub.pub");
+	enc.Encrypt("E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\p.mp4", "E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\test.ief");
 
-    LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-    LoadStringW(hInstance, IDC_FILEGRABBER, szWindowClass, MAX_LOADSTRING);
+    LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
+    LoadString(hInstance, IDC_FILEGRABBER, szWindowClass, MAX_LOADSTRING);
     MyRegisterClass(hInstance);
 
     if (!InitInstance (hInstance, nCmdShow))

@@ -41,7 +41,6 @@ void ListFileProcess(shared_ptr<list<FileLister::FileData>> ptr, const TCHAR* pa
 		}
 		else
 		{
-			Convert convert;
 			FileLister::FileData data;
 			_tcscpy(data.Dictionary, path);
 			_tcscpy(data.name, FindFileData.cFileName);

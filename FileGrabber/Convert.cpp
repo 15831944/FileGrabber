@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Convert.h"
+#include <locale>
 using namespace std;
 
 wstring Convert::toString(int var)
