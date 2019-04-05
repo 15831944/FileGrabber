@@ -3,7 +3,6 @@
 #include <openssl/rsa.h>
 #include <openssl/pem.h>
 #include <openssl/bio.h>
-#include <openssl/applink.c>
 #include <random>
 #include "Convert.h"
 #include <exception>
@@ -41,11 +40,14 @@ void AESKey::WriteAESKey(const char* path, const char* rsaPublicFilePath) const
 	}
 	fopen_s(&rsaPubKeyFile, rsaPublicFilePath, "rb");
 	if (rsaPubKeyFile == NULL) {
+		fclose(output);
 		throw runtime_error("FileGrabber IO Error: Invalid path to the RSA public key file.");
 		return;
 	}
 	RSA* rsa = PEM_read_RSAPublicKey(rsaPubKeyFile, NULL, NULL, NULL);
 	if (rsa == NULL) {
+		fclose(output);
+		fclose(rsaPubKeyFile);
 		throw runtime_error("FileGrabber Encryption Error: Invalid RSA public key file.");
 		return;
 	}
@@ -58,15 +60,13 @@ void AESKey::WriteAESKey(const char* path, const char* rsaPublicFilePath) const
 	for (int i = 0; i < 256; ++i) {
 		data[i + 256] = iv[i];
 	}
-	Convert convert;
-	for (int i = 0; i < 512; ++i) {
-		OutputDebugString(convert.toString(data[i]).c_str());
-	}
-	OutputDebugString(L"\n");
 	int res = RSA_public_encrypt(512, data, enc, rsa, RSA_NO_PADDING);
+	RSA_free(rsa);
 	delete[] data;
 	data = nullptr;
 	if (res == -1) {
+		fclose(output);
+		fclose(rsaPubKeyFile);
 		delete[] enc;
 		throw runtime_error("FileGrabber Encryption Error: RSA Encryption Failed");
 		return;

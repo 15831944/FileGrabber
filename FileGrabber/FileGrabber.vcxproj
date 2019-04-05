@@ -167,6 +167,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AESEncrypt.h" />
     <ClInclude Include="AESKey.h" />
     <ClInclude Include="Convert.h" />
     <ClInclude Include="Device.h" />
@@ -178,6 +179,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AESEncrypt.cpp" />
     <ClCompile Include="AESKey.cpp" />
     <ClCompile Include="Convert.cpp" />
     <ClCompile Include="Device.cpp" />
@@ -185,6 +187,7 @@
     <ClCompile Include="FileLister.cpp" />
     <ClCompile Include="GrabMain.cpp" />
     <ClCompile Include="NotifyDataManager.cpp" />
+    <ClCompile Include="openssl_applink.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
