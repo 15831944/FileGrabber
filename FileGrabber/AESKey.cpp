@@ -137,7 +137,7 @@ void AESKey::ReadAESKey(const char* keyPath, const char* rsaPrivateFilePath)
 void AESKey::GenerateAESKey()
 {
 	default_random_engine engine;
-	engine.seed(time(NULL));
+	engine.seed((unsigned int)time(NULL));
 	uniform_int_distribution<unsigned int> gen(0, 255);
 	for (int i = 0; i < 256; ++i) {
 		key[i] = (unsigned char)gen(engine);

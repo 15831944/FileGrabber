@@ -23,8 +23,10 @@ public:
 	void SetDiskStatus(DiskStatus ds);
 	DiskStatus GetDiskStatus() const;
 	DiskInformation GetDiskInformation();
+	SYSTEMTIME GetDiskArriveTime()const;
 protected:
 	DiskStatus diskStatus;
 	TCHAR diskLabel;
+	SYSTEMTIME arriveTime;
 };
 

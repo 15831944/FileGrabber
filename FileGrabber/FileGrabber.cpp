@@ -20,6 +20,7 @@ extern bool IsServiceOn;
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
+int ConsoleMain(int argc, wchar_t* argv[]);
 BOOL CheckSingleInstance(LPCTSTR pszUniqueName);
 void DeviceArrivalMain(TCHAR DriveLetter);
 void DeviceRemovalMain(TCHAR DriveLetter);
@@ -32,19 +33,16 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 	
-	if (CheckSingleInstance(TEXT("Global\\82ECF125A20C4C6C91959A89D5F34E36")) == FALSE) {
-		MessageBox(NULL, TEXT("Only one instance can be run at a time."), TEXT("FileGrabber - Error"), MB_ICONERROR);
-		return 0;
+	if (_tcscmp(lpCmdLine, TEXT("")) != 0) {
+		int argc;
+		wchar_t** argv = CommandLineToArgvW(lpCmdLine, &argc);
+		return ConsoleMain(argc, argv);
 	}
 
-	//AESKey key;
-	//AESEncrypt enc(key);
-	//Convert convert;
-	//enc.Encrypt(L"E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\p.mp4", 
-		//(L"E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\"+convert.toString(enc.EncryptFileName(L"p.mp4"))+L".ief").c_str());
-	//enc.Decrypt(L"E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\p.ief", L"E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\pp.mp4");
-	//RSAEncrypt enc("E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\pub.pub");
-	//enc.Encrypt("E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\p.mp4", "E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\test.ief");
+	if (CheckSingleInstance(TEXT("Global\\82ECF125A20C4C6C91959A89D5F34E36")) == FALSE) {
+		MessageBox(NULL, TEXT("Only one instance can be launched at a time."), TEXT("FileGrabber - Error"), MB_ICONERROR);
+		return 0;
+	}
 
     LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
     LoadString(hInstance, IDC_FILEGRABBER, szWindowClass, MAX_LOADSTRING);
@@ -188,8 +186,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		AppendMenu(hNotifyMenu, MF_STRING, IDN_SERVICE, TEXT("Stop Service"));
 		AppendMenu(hNotifyMenu, MF_STRING, IDN_EXIT, TEXT("Exit"));
 		notify = new NotifyDataManager(hWnd, WM_NOTIFYMSG, LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_FILEGRABBER)),
-			NIF_ICON | NIF_MESSAGE | NIF_TIP | NIF_INFO, TEXT("FileGrabber 0.1.0\nStatus: Started"),
-			TEXT("FileGrabber 0.1.0 is running, service started."), TEXT("FileGrabber 0.1.0 Service Started"));
+			NIF_ICON | NIF_MESSAGE | NIF_TIP | NIF_INFO, TEXT("FileGrabber 0.1.1\nStatus: Started"),
+			TEXT("FileGrabber 0.1.1 is running, service started."), TEXT("FileGrabber 0.1.1 Service Started"));
 		break;
 	case WM_NOTIFYMSG:
 		if (lParam == WM_RBUTTONDOWN) {
@@ -205,9 +203,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				if (IsServiceOn) {
 					IsServiceOn = false;
 					hNotifyMenu = CreatePopupMenu();
-					notify->setTip(TEXT("FileGrabber 0.1.0\nStatus: Stopped"));
-					notify->setInfo(TEXT("FileGrabber 0.1.0 service stopped. Select \"Start Service\" to restart service."));
-					notify->setInfoTitle(TEXT("FileGrabber 0.1.0 Service Stopped"));
+					notify->setTip(TEXT("FileGrabber 0.1.1\nStatus: Stopped"));
+					notify->setInfo(TEXT("FileGrabber 0.1.1 service stopped. Select \"Start Service\" to restart service."));
+					notify->setInfoTitle(TEXT("FileGrabber 0.1.1 Service Stopped"));
 					notify->updateNotify();
 					AppendMenu(hNotifyMenu, MF_STRING, IDN_SERVICE, TEXT("Start Service"));
 					AppendMenu(hNotifyMenu, MF_STRING, IDN_EXIT, TEXT("Exit"));
@@ -215,9 +213,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				else {
 					IsServiceOn = true;
 					hNotifyMenu = CreatePopupMenu();
-					notify->setTip(TEXT("FileGrabber 0.1.0\nStatus: Started"));
-					notify->setInfo(TEXT("FileGrabber 0.1.0 service started."));
-					notify->setInfoTitle(TEXT("FileGrabber 0.1.0 Service Started"));
+					notify->setTip(TEXT("FileGrabber 0.1.1\nStatus: Started"));
+					notify->setInfo(TEXT("FileGrabber 0.1.1 service started."));
+					notify->setInfoTitle(TEXT("FileGrabber 0.1.1 Service Started"));
 					notify->updateNotify();
 					AppendMenu(hNotifyMenu, MF_STRING, IDN_SERVICE, TEXT("Stop Service"));
 					AppendMenu(hNotifyMenu, MF_STRING, IDN_EXIT, TEXT("Exit"));
@@ -233,6 +231,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		else {
 			break;
 		}
+	case WM_DESTROY:
+		notify->deleteNotify();
+		delete notify;
+		break;
     }
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }

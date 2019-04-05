@@ -35,3 +35,13 @@ typedef unsigned long long uint64;
 #define WM_NOTIFYMSG				WM_USER
 #define IDN_SERVICE					1501
 #define IDN_EXIT					1502
+
+struct FileData {
+	TCHAR Directory[_MAX_PATH];
+	FILETIME time_create;
+	FILETIME time_access;
+	FILETIME time_write;
+	DWORD attributes;
+	DWORD64 size;
+	TCHAR name[_MAX_PATH];
+};

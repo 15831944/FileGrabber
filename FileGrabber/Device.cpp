@@ -1,10 +1,13 @@
 #include "stdafx.h"
 #include "Device.h"
+#include <clocale>
 
 Device::Device(TCHAR diskLabel)
 {
 	this->diskLabel = diskLabel;
 	this->diskStatus = DiskStatus::OK;
+	_tsetlocale(LC_ALL, TEXT("chs"));
+	GetLocalTime(&this->arriveTime);
 }
 
 Device::Device()
@@ -50,4 +53,9 @@ Device::DiskInformation Device::GetDiskInformation()
 	info.FreeSpaceToCaller = FreeBytesToCaller;
 	info.TotalSpace = TotalBytes;
 	return info;
+}
+
+SYSTEMTIME Device::GetDiskArriveTime() const
+{
+	return arriveTime;
 }

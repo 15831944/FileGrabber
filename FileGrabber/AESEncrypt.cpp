@@ -35,7 +35,7 @@ void AESEncrypt::Encrypt(const TCHAR* path, const TCHAR* outputPath)
 		if (len > 256) {
 			fread_s(buffer, 256 * sizeof(unsigned char), sizeof(unsigned char), 256, origin);
 			EVP_EncryptUpdate(ctx, enc, &outl, buffer, 256);
-			fwrite(enc, sizeof(unsigned char), 256, encryption);
+			fwrite(enc, sizeof(unsigned char), outl, encryption);
 			len -= 256;
 		}
 		else {

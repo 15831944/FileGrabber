@@ -45,6 +45,12 @@
     <ClInclude Include="AESEncrypt.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="FileCopyer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FileSearcher.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -75,6 +81,15 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="openssl_applink.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="FileCopyer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ConsoleMain.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="FileSearcher.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
