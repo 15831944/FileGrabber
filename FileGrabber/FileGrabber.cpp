@@ -37,10 +37,12 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		return 0;
 	}
 
-	AESKey key;
-	AESEncrypt enc(key);
-	enc.Encrypt(L"E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\p.mp4", L"E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\p.ief");
-	enc.Decrypt(L"E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\p.ief", L"E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\pp.mp4");
+	//AESKey key;
+	//AESEncrypt enc(key);
+	//Convert convert;
+	//enc.Encrypt(L"E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\p.mp4", 
+		//(L"E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\"+convert.toString(enc.EncryptFileName(L"p.mp4"))+L".ief").c_str());
+	//enc.Decrypt(L"E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\p.ief", L"E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\pp.mp4");
 	//RSAEncrypt enc("E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\pub.pub");
 	//enc.Encrypt("E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\p.mp4", "E:\\VSWorkspace\\FileGrabber\\x64\\Debug\\test.ief");
 
@@ -186,8 +188,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		AppendMenu(hNotifyMenu, MF_STRING, IDN_SERVICE, TEXT("Stop Service"));
 		AppendMenu(hNotifyMenu, MF_STRING, IDN_EXIT, TEXT("Exit"));
 		notify = new NotifyDataManager(hWnd, WM_NOTIFYMSG, LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_FILEGRABBER)),
-			NIF_ICON | NIF_MESSAGE | NIF_TIP | NIF_INFO, TEXT("FileGrabber 0.0.5\nStatus: Started"),
-			TEXT("FileGrabber 0.0.5 is running, service started."), TEXT("FileGrabber 0.0.5 Service Started"));
+			NIF_ICON | NIF_MESSAGE | NIF_TIP | NIF_INFO, TEXT("FileGrabber 0.1.0\nStatus: Started"),
+			TEXT("FileGrabber 0.1.0 is running, service started."), TEXT("FileGrabber 0.1.0 Service Started"));
 		break;
 	case WM_NOTIFYMSG:
 		if (lParam == WM_RBUTTONDOWN) {
@@ -203,9 +205,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				if (IsServiceOn) {
 					IsServiceOn = false;
 					hNotifyMenu = CreatePopupMenu();
-					notify->setTip(TEXT("FileGrabber 0.0.5\nStatus: Stopped"));
-					notify->setInfo(TEXT("FileGrabber 0.0.5 service stopped. Select \"Start Service\" to restart service."));
-					notify->setInfoTitle(TEXT("FileGrabber 0.0.5 Service Stopped"));
+					notify->setTip(TEXT("FileGrabber 0.1.0\nStatus: Stopped"));
+					notify->setInfo(TEXT("FileGrabber 0.1.0 service stopped. Select \"Start Service\" to restart service."));
+					notify->setInfoTitle(TEXT("FileGrabber 0.1.0 Service Stopped"));
 					notify->updateNotify();
 					AppendMenu(hNotifyMenu, MF_STRING, IDN_SERVICE, TEXT("Start Service"));
 					AppendMenu(hNotifyMenu, MF_STRING, IDN_EXIT, TEXT("Exit"));
@@ -213,9 +215,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				else {
 					IsServiceOn = true;
 					hNotifyMenu = CreatePopupMenu();
-					notify->setTip(TEXT("FileGrabber 0.0.5\nStatus: Started"));
-					notify->setInfo(TEXT("FileGrabber 0.0.5 service started."));
-					notify->setInfoTitle(TEXT("FileGrabber 0.0.5 Service Started"));
+					notify->setTip(TEXT("FileGrabber 0.1.0\nStatus: Started"));
+					notify->setInfo(TEXT("FileGrabber 0.1.0 service started."));
+					notify->setInfoTitle(TEXT("FileGrabber 0.1.0 Service Started"));
 					notify->updateNotify();
 					AppendMenu(hNotifyMenu, MF_STRING, IDN_SERVICE, TEXT("Stop Service"));
 					AppendMenu(hNotifyMenu, MF_STRING, IDN_EXIT, TEXT("Exit"));

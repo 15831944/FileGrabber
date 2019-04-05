@@ -2,8 +2,11 @@
 #include "AESEncrypt.h"
 #include <openssl/aes.h>
 #include <openssl/evp.h>
+#include <openssl/bio.h>
+#include <openssl/buffer.h>
 #include <exception>
 #include <stdexcept>
+#include <filesystem>
 using namespace std;
 
 void AESEncrypt::Encrypt(const TCHAR* path, const TCHAR* outputPath)
@@ -48,6 +51,7 @@ void AESEncrypt::Encrypt(const TCHAR* path, const TCHAR* outputPath)
 	fclose(encryption);
 }
 
+
 void AESEncrypt::Decrypt(const TCHAR* path, const TCHAR* outputPath)
 {
 	FILE* origin, * decryption;
@@ -88,4 +92,50 @@ void AESEncrypt::Decrypt(const TCHAR* path, const TCHAR* outputPath)
 	fwrite(enc, sizeof(unsigned char), outl, decryption);
 	fclose(origin);
 	fclose(decryption);
+}
+
+string AESEncrypt::EncryptFileName(const TCHAR* filename)
+{
+	int len = _tcslen(filename) * sizeof(wchar_t) * 2;
+	BIO* bmem = NULL;
+	BIO* b64 = NULL;
+	BUF_MEM* bptr = NULL;
+	b64 = BIO_new(BIO_f_base64());
+	BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
+	bmem = BIO_new(BIO_s_mem());
+	b64 = BIO_push(b64, bmem);
+	BIO_write(b64, filename, len);
+	BIO_flush(b64);
+	BIO_get_mem_ptr(b64, &bptr);
+	char* buff = (char*)malloc(bptr->length + 1);
+	if (buff != NULL) {
+		memcpy(buff, bptr->data, bptr->length);
+		buff[bptr->length] = 0;
+		BIO_free_all(b64);
+		string s = buff;
+		free(buff);
+		return s;
+	}
+	else {
+		throw runtime_error("FileGrabber Memory Error: Pointer \"buff\" is nullptr.");
+		return "";
+	}
+}
+
+string AESEncrypt::DecryptFileName(const TCHAR* filename)
+{
+	int len = _tcslen(filename) * sizeof(wchar_t) * 2;
+	BIO* b64 = NULL;
+	BIO* bmem = NULL;
+	char* buffer = (char*)malloc(len);
+	memset(buffer, 0, len);
+	b64 = BIO_new(BIO_f_base64());
+	BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
+	bmem = BIO_new_mem_buf(filename, len);
+	bmem = BIO_push(b64, bmem);
+	BIO_read(bmem, buffer, len);
+	BIO_free_all(bmem);
+	string s = buffer;
+	free(buffer);
+	return s;
 }
