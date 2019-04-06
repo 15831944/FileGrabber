@@ -186,8 +186,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		AppendMenu(hNotifyMenu, MF_STRING, IDN_SERVICE, TEXT("Stop Service"));
 		AppendMenu(hNotifyMenu, MF_STRING, IDN_EXIT, TEXT("Exit"));
 		notify = new NotifyDataManager(hWnd, WM_NOTIFYMSG, LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_FILEGRABBER)),
-			NIF_ICON | NIF_MESSAGE | NIF_TIP | NIF_INFO, TEXT("FileGrabber 0.1.1\nStatus: Started"),
-			TEXT("FileGrabber 0.1.1 is running, service started."), TEXT("FileGrabber 0.1.1 Service Started"));
+			NIF_ICON | NIF_MESSAGE | NIF_TIP | NIF_INFO, TEXT("FileGrabber 0.2.0\nStatus: Started"),
+			TEXT("FileGrabber 0.2.0 is running, service started."), TEXT("FileGrabber 0.2.0 Service Started"));
 		break;
 	case WM_NOTIFYMSG:
 		if (lParam == WM_RBUTTONDOWN) {
@@ -203,9 +203,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				if (IsServiceOn) {
 					IsServiceOn = false;
 					hNotifyMenu = CreatePopupMenu();
-					notify->setTip(TEXT("FileGrabber 0.1.1\nStatus: Stopped"));
-					notify->setInfo(TEXT("FileGrabber 0.1.1 service stopped. Select \"Start Service\" to restart service."));
-					notify->setInfoTitle(TEXT("FileGrabber 0.1.1 Service Stopped"));
+					notify->setTip(TEXT("FileGrabber 0.2.0\nStatus: Stopped"));
+					notify->setInfo(TEXT("FileGrabber 0.2.0 service stopped. Select \"Start Service\" to restart service."));
+					notify->setInfoTitle(TEXT("FileGrabber 0.2.0 Service Stopped"));
 					notify->updateNotify();
 					AppendMenu(hNotifyMenu, MF_STRING, IDN_SERVICE, TEXT("Start Service"));
 					AppendMenu(hNotifyMenu, MF_STRING, IDN_EXIT, TEXT("Exit"));
@@ -213,9 +213,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				else {
 					IsServiceOn = true;
 					hNotifyMenu = CreatePopupMenu();
-					notify->setTip(TEXT("FileGrabber 0.1.1\nStatus: Started"));
-					notify->setInfo(TEXT("FileGrabber 0.1.1 service started."));
-					notify->setInfoTitle(TEXT("FileGrabber 0.1.1 Service Started"));
+					notify->setTip(TEXT("FileGrabber 0.2.0\nStatus: Started"));
+					notify->setInfo(TEXT("FileGrabber 0.2.0 service started."));
+					notify->setInfoTitle(TEXT("FileGrabber 0.2.0 Service Started"));
 					notify->updateNotify();
 					AppendMenu(hNotifyMenu, MF_STRING, IDN_SERVICE, TEXT("Stop Service"));
 					AppendMenu(hNotifyMenu, MF_STRING, IDN_EXIT, TEXT("Exit"));
