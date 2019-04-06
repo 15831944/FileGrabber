@@ -12,7 +12,7 @@ using namespace std;
 void AESEncrypt::Encrypt(const TCHAR* path, const TCHAR* outputPath)
 {
 	FILE *origin, *encryption;
-	_tfopen_s(&origin, path, TEXT("rb"));
+	errno_t e = _tfopen_s(&origin, path, TEXT("rb"));
 	if (origin == NULL) {
 		throw runtime_error("FileGrabber IO Error: Invalid path to the origin file.");
 		return;

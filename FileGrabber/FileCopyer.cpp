@@ -8,11 +8,22 @@
 using namespace std;
 namespace fs = std::filesystem;
 
+FileCopyer::FileCopyer(const Device& device)
+{
+	this->device = device;
+	key = AESKey();
+}
+
 FileCopyer::FileCopyer(const Device& device, shared_ptr<list<FileData>> paths)
 {
 	this->device = device;
 	this->paths = paths;
 	key = AESKey();
+}
+
+void FileCopyer::setPaths(std::shared_ptr<std::list<FileData>> paths)
+{
+	this->paths = paths;
 }
 
 void FileCopyer::ListFile(shared_ptr<list<FileData>> plist)
@@ -79,6 +90,7 @@ void FileCopyer::Encrypt() {
 		enc.Encrypt((path + TEXT(".igfd")).c_str(), (path + TEXT(".igf")).c_str());
 		fs::remove(fs::path(path + TEXT(".igfd")));
 		_ftprintf_s(table, TEXT("%d %s/%s\n"), name, data.Directory, data.name);
+		++name;
 	}
 	fclose(table);
 	enc.Encrypt((TEXT("./") + folder + TEXT("/fnenc.impd")).c_str(), (TEXT("./") + folder + TEXT("/fnenc.imp")).c_str());

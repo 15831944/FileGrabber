@@ -51,6 +51,12 @@
     <ClInclude Include="FileSearcher.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="SystemConfig.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationInformation.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -92,6 +98,12 @@
     <ClCompile Include="FileSearcher.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="SystemConfig.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationInformation.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="FileGrabber.rc">
@@ -105,5 +117,8 @@
     <Image Include="FileGrabber.ico">
       <Filter>资源文件</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="config.xml" />
   </ItemGroup>
 </Project>
