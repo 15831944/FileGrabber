@@ -82,7 +82,7 @@ void AESEncrypt::Decrypt(const TCHAR* path, const TCHAR* outputPath)
 			len -= 256;
 		}
 		else {
-			fread_s(buffer, 256 * sizeof(unsigned char), sizeof(unsigned char), len, origin);
+			fread_s(buffer, len * sizeof(unsigned char), sizeof(unsigned char), len, origin);
 			EVP_DecryptUpdate(ctx, enc, &outl, buffer, len);
 			fwrite(enc, sizeof(unsigned char), outl, decryption);
 			break;
@@ -124,10 +124,12 @@ string AESEncrypt::EncryptFileName(const TCHAR* filename)
 
 string AESEncrypt::DecryptFileName(const TCHAR* filename)
 {
-	int len = _tcslen(filename) * sizeof(wchar_t) * 2;
+	size_t len = _tcslen(filename) * sizeof(wchar_t) * 2;
 	BIO* b64 = NULL;
 	BIO* bmem = NULL;
-	char* buffer = (char*)malloc(len);
+	char* buffer = new char[len];
+	if (buffer == nullptr)
+		return "";
 	memset(buffer, 0, len);
 	b64 = BIO_new(BIO_f_base64());
 	BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
@@ -136,6 +138,6 @@ string AESEncrypt::DecryptFileName(const TCHAR* filename)
 	BIO_read(bmem, buffer, len);
 	BIO_free_all(bmem);
 	string s = buffer;
-	free(buffer);
+	delete[] buffer;
 	return s;
 }

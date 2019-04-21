@@ -24,6 +24,7 @@ int ConsoleMain(int argc, wchar_t* argv[]);
 BOOL CheckSingleInstance(LPCTSTR pszUniqueName);
 void DeviceArrivalMain(TCHAR DriveLetter);
 void DeviceRemovalMain(TCHAR DriveLetter);
+void InitProgram();
 
 int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -54,6 +55,8 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
     }
 
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_FILEGRABBER));
+
+	InitProgram();
 
     MSG msg;
 
