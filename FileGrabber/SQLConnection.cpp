@@ -19,7 +19,7 @@ void SQLConnection::open()
 		throw sql_connection_error(sqlite3_errcode(connection), sqlite3_errmsg(connection));
 	}
 
-	if (!isTableExist("DISK_RECORD")) {
+	if (!checkTableExistence(L"DISK_RECORD")) {
 		createRecordTable();
 	}
 }
@@ -36,51 +36,52 @@ void SQLConnection::close()
 	connection = nullptr;
 }
 
-bool SQLConnection::isTableExist(string name)
+bool SQLConnection::checkTableExistence(wstring name)
 {
-	if (connection == nullptr)
+	if (connection == nullptr) {
 		throw sql_connection_error(10001, "FileGrabber SQL Error: Invalid connection");
-	string strFindTable = "SELECT COUNT(*) FROM sqlite_master where type ='table' and name ='" + name + "'";
-	char* sErrMsg = nullptr;
-	int nTableNums = 0;
-
-	auto callback = [](void* pHandle, int iRet, char** szSrc, char** szDst) -> int {
-		if (1 == iRet) {
-			int iTableExist = atoi(*(szSrc));
-			if (pHandle != nullptr) {
-				int* pRes = (int*)pHandle;
-				*pRes = iTableExist;
-			}
-		}
-		return 0;
-	};
-
-	if (sqlite3_exec(connection, strFindTable.c_str(), callback, &nTableNums, &sErrMsg) != SQLITE_OK) {
-		return false;
 	}
-	return nTableNums > 0;
+	wstring strFindTable = L"SELECT COUNT(*) FROM sqlite_master where type ='table' and name ='" + name + L"'";
+	
+	int rc;
+	sqlite3_stmt* stmt;
+	rc = sqlite3_prepare16_v2(connection, strFindTable.c_str(), static_cast<int>(strFindTable.length() * 2), &stmt, nullptr);
+	if (rc != SQLITE_OK) {
+		throw sql_connection_error(sqlite3_errcode(connection), sqlite3_errmsg(connection));
+	}
+	rc = sqlite3_step(stmt);
+	if (rc != SQLITE_ROW) {
+		throw sql_connection_error(sqlite3_errcode(connection), sqlite3_errmsg(connection));
+	}
+	int row = sqlite3_column_int(stmt, 0);
+	sqlite3_finalize(stmt);
+	return row > 0;
 }
 
 void SQLConnection::createRecordTable()
 {
 	if (connection == nullptr)
 		throw sql_connection_error(10001, "FileGrabber SQL Error: Invalid connection");
-	string strCreateTable = "CREATE TABLE DISK_RECORD("  \
-		"ID INT PRIMARY    KEY      NOT NULL," \
-		"Label             TEXT     NOT NULL," \
-		"SerialNumber      INT      NOT NULL," \
-		"FileSystem        CHAR(50) NOT NULL," \
-		"FileSystemFlags   INT      NOT NULL," \
-		"DriveLetter       INT      NOT NULL," \
-		"TotalSpace        CHAR(20) NOT NULL," \
-		"FreeSpace         CHAR(20) NOT NULL," \
-		"FreeSpaceToCaller CHAR(20) NOT NULL);";
-	char* errMsg;
-	int rc = sqlite3_exec(connection, strCreateTable.c_str(), nullptr, nullptr, &errMsg);
+	wstring strCreateTable = L"CREATE TABLE DISK_RECORD(\
+		ID INT PRIMARY    KEY      NOT NULL,\
+		Label             CHAR(20) NOT NULL,\
+		SerialNumber      INT      NOT NULL,\
+		FileSystem        CHAR(15) NOT NULL,\
+		FileSystemFlags   INT      NOT NULL,\
+		DriveLetter       INT      NOT NULL,\
+		TotalSpace        CHAR(40) NOT NULL,\
+		FreeSpace         CHAR(40) NOT NULL,\
+		FreeSpaceToCaller CHAR(40) NOT NULL);";
+	int rc;
+	sqlite3_stmt* stmt;
+	rc = sqlite3_prepare16_v2(connection, strCreateTable.c_str(), static_cast<int>(strCreateTable.length() * 2), &stmt, nullptr);
 	if (rc != SQLITE_OK) {
-		string msg = errMsg;
-		free(errMsg);
-		throw sql_connection_error(sqlite3_errcode(connection), msg);
+		throw sql_connection_error(sqlite3_errcode(connection), sqlite3_errmsg(connection));
+	}
+	rc = sqlite3_step(stmt);
+	sqlite3_finalize(stmt);
+	if (rc != SQLITE_DONE) {
+		throw sql_connection_error(sqlite3_errcode(connection), sqlite3_errmsg(connection));
 	}
 }
 

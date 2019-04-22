@@ -57,7 +57,12 @@ void DeviceRemovalMain(TCHAR DriveLetter) {
 
 // Usually this function should be empty.
 void InitProgram() {
-	SQLConnection conn(L"fuck.idb");
-	conn.open();
-	conn.close();
+	try {
+		SQLConnection conn(L"test.idb");
+		conn.open();
+		conn.close();
+	}
+	catch (sql_connection_error & sqle) {
+		MessageBoxA(NULL, sqle.what(), "", MB_ICONERROR);
+	}
 }
