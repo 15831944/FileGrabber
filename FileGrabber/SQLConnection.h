@@ -1,5 +1,5 @@
 #pragma once
-
+#include "Device.h"
 struct sqlite3;
 
 class SQLConnection
@@ -9,7 +9,7 @@ public:
 	void open();
 	void close();
 	bool checkTableExistence(const std::wstring name);
-	void insertRecord(const FileData& data);
+	void insertRecord(Device device);
 	~SQLConnection();
 protected:
 	std::wstring filename;

@@ -180,6 +180,7 @@ LRESULT DeviceChange(UINT message, WPARAM wParam, LPARAM lParam)
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+	/*
 	static HMENU hNotifyMenu = NULL;
 	static NotifyDataManager* notify;
     switch (message)
@@ -239,5 +240,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		delete notify;
 		break;
     }
+	*/
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }

