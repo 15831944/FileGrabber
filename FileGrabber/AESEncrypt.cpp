@@ -94,6 +94,7 @@ void AESEncrypt::Decrypt(const TCHAR* path, const TCHAR* outputPath)
 	fclose(decryption);
 }
 
+/*
 string AESEncrypt::EncryptFileName(const TCHAR* filename)
 {
 	int len = _tcslen(filename) * sizeof(wchar_t) * 2;
@@ -121,7 +122,9 @@ string AESEncrypt::EncryptFileName(const TCHAR* filename)
 		return "";
 	}
 }
+*/
 
+/*
 string AESEncrypt::DecryptFileName(const TCHAR* filename)
 {
 	size_t len = _tcslen(filename) * sizeof(wchar_t) * 2;
@@ -141,3 +144,4 @@ string AESEncrypt::DecryptFileName(const TCHAR* filename)
 	delete[] buffer;
 	return s;
 }
+*/

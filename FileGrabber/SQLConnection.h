@@ -15,6 +15,9 @@ protected:
 	std::wstring filename;
 	sqlite3* connection = nullptr;
 	void createRecordTable();
+	void initDatabase();
+	void versionCheck();
+	int sqlite3_step16(const std::wstring& sql) const;
 	friend void InitProgram();
 };
 

@@ -2,11 +2,11 @@
 #include "Device.h"
 #include <clocale>
 
-Device::Device(TCHAR diskLabel)
+Device::Device(wchar_t diskLabel)
 {
 	this->diskLabel = diskLabel;
 	this->diskStatus = DiskStatus::OK;
-	_tsetlocale(LC_ALL, TEXT("chs"));
+	_wsetlocale(LC_ALL, L"chs");
 	GetLocalTime(&this->arriveTime);
 }
 
@@ -16,7 +16,7 @@ Device::Device()
 	this->diskStatus = DiskStatus::INVALID;
 }
 
-TCHAR Device::GetDiskLabel() const
+wchar_t Device::GetDiskLabel() const
 {
 	return this->diskLabel;
 }
@@ -37,10 +37,10 @@ Device::DiskInformation Device::GetDiskInformation()
 	if (this->diskStatus == DiskStatus::INVALID) {
 		return info;
 	}
-	TCHAR path[3] = { this->diskLabel,TEXT(':'),TEXT('\0') };
-	TCHAR VolumeName[255];
+	wchar_t path[3] = { this->diskLabel, L':', L'\0' };
+	wchar_t VolumeName[255];
 	DWORD VolumeSerialNumber, MaximumComponentLength, FileSystemFlags;
-	TCHAR FileSystemName[255];
+	wchar_t FileSystemName[255];
 	GetVolumeInformation(path, VolumeName, 254, &VolumeSerialNumber, &MaximumComponentLength, &FileSystemFlags, FileSystemName, 254);
 	info.DriveLetter = this->diskLabel;
 	info.FileSystem = FileSystemName;

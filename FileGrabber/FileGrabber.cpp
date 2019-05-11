@@ -41,7 +41,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	}
 
 	if (CheckSingleInstance(TEXT("Global\\82ECF125A20C4C6C91959A89D5F34E36")) == FALSE) {
-		MessageBox(NULL, TEXT("Only one instance can be launched at a time."), TEXT("FileGrabber - Error"), MB_ICONERROR);
+		MessageBox(NULL, TEXT("Only one instance can be launched at a time."), TEXT("FileGrabber 0.2.3 - Error"), MB_ICONERROR);
 		return 0;
 	}
 
@@ -180,7 +180,6 @@ LRESULT DeviceChange(UINT message, WPARAM wParam, LPARAM lParam)
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	/*
 	static HMENU hNotifyMenu = NULL;
 	static NotifyDataManager* notify;
     switch (message)
@@ -190,8 +189,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		AppendMenu(hNotifyMenu, MF_STRING, IDN_SERVICE, TEXT("Stop Service"));
 		AppendMenu(hNotifyMenu, MF_STRING, IDN_EXIT, TEXT("Exit"));
 		notify = new NotifyDataManager(hWnd, WM_NOTIFYMSG, LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_FILEGRABBER)),
-			NIF_ICON | NIF_MESSAGE | NIF_TIP | NIF_INFO, TEXT("FileGrabber 0.2.1\nStatus: Started"),
-			TEXT("FileGrabber 0.2.1 is running, service started."), TEXT("FileGrabber 0.2.1 Service Started"));
+			NIF_ICON | NIF_MESSAGE | NIF_TIP | NIF_INFO, TEXT("FileGrabber 0.2.3\nStatus: Started"),
+			TEXT("FileGrabber 0.2.3 is running, service started."), TEXT("FileGrabber 0.2.3 Service Started"));
 		break;
 	case WM_NOTIFYMSG:
 		if (lParam == WM_RBUTTONDOWN) {
@@ -207,9 +206,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				if (IsServiceOn) {
 					IsServiceOn = false;
 					hNotifyMenu = CreatePopupMenu();
-					notify->setTip(TEXT("FileGrabber 0.2.1\nStatus: Stopped"));
-					notify->setInfo(TEXT("FileGrabber 0.2.1 service stopped. Select \"Start Service\" to restart service."));
-					notify->setInfoTitle(TEXT("FileGrabber 0.2.1 Service Stopped"));
+					notify->setTip(TEXT("FileGrabber 0.2.3\nStatus: Stopped"));
+					notify->setInfo(TEXT("FileGrabber 0.2.3 service stopped. Select \"Start Service\" to restart service."));
+					notify->setInfoTitle(TEXT("FileGrabber 0.2.3 Service Stopped"));
 					notify->updateNotify();
 					AppendMenu(hNotifyMenu, MF_STRING, IDN_SERVICE, TEXT("Start Service"));
 					AppendMenu(hNotifyMenu, MF_STRING, IDN_EXIT, TEXT("Exit"));
@@ -217,9 +216,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				else {
 					IsServiceOn = true;
 					hNotifyMenu = CreatePopupMenu();
-					notify->setTip(TEXT("FileGrabber 0.2.1\nStatus: Started"));
-					notify->setInfo(TEXT("FileGrabber 0.2.1 service started."));
-					notify->setInfoTitle(TEXT("FileGrabber 0.2.1 Service Started"));
+					notify->setTip(TEXT("FileGrabber 0.2.3\nStatus: Started"));
+					notify->setInfo(TEXT("FileGrabber 0.2.3 service started."));
+					notify->setInfoTitle(TEXT("FileGrabber 0.2.3 Service Started"));
 					notify->updateNotify();
 					AppendMenu(hNotifyMenu, MF_STRING, IDN_SERVICE, TEXT("Stop Service"));
 					AppendMenu(hNotifyMenu, MF_STRING, IDN_EXIT, TEXT("Exit"));
@@ -240,6 +239,5 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		delete notify;
 		break;
     }
-	*/
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }

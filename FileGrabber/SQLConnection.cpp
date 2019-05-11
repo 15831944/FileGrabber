@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "SQLConnection.h"
 #include "sql_connection_error.h"
+#include "ApplicationInformation.h"
 #include <sqlite3.h>
 using namespace std;
 
@@ -21,7 +22,8 @@ void SQLConnection::open()
 		throw sql_connection_error(sqlite3_errcode(connection), sqlite3_errmsg(connection));
 	}
 
-	if (!checkTableExistence(L"DISK_RECORD")) {
+	versionCheck();
+	if (!checkTableExistence(L"disk_record")) {
 		createRecordTable();
 	}
 }
@@ -90,17 +92,12 @@ void SQLConnection::createRecordTable()
 {
 	if (connection == nullptr)
 		throw sql_connection_error(10001, "FileGrabber SQL Error: Invalid connection");
-	wstring strCreateTable = L"CREATE TABLE DISK_RECORD(\
-		ID INTEGER PRIMARY KEY AUTOINCREMENT,\
-		Label             CHAR(20) NOT NULL,\
-		SerialNumber      INT      NOT NULL,\
-		FileSystem        CHAR(15) NOT NULL,\
-		FileSystemFlags   INT      NOT NULL,\
-		DriveLetter       INT      NOT NULL,\
-		TotalSpace        CHAR(40) NOT NULL,\
-		FreeSpace         CHAR(40) NOT NULL,\
-		FreeSpaceToCaller CHAR(40) NOT NULL,\
-		RecordTime        CHAR(22) NOT NULL);";
+	wstring strCreateTable = L"CREATE TABLE disk_record("
+		"ID INTEGER PRIMARY KEY AUTOINCREMENT, Label CHAR(20) NOT NULL, "
+		"SerialNumber INT NOT NULL, FileSystem CHAR(15) NOT NULL, "
+		"FileSystemFlags INT NOT NULL, DriveLetter INT NOT NULL, "
+		"TotalSpace CHAR(40) NOT NULL, FreeSpace CHAR(40) NOT NULL, "
+		"FreeSpaceToCaller CHAR(40) NOT NULL, RecordTime CHAR(22) NOT NULL);";
 	int rc;
 	sqlite3_stmt* stmt;
 	rc = sqlite3_prepare16_v2(connection, strCreateTable.c_str(), static_cast<int>(strCreateTable.length() * 2), &stmt, nullptr);
@@ -112,6 +109,42 @@ void SQLConnection::createRecordTable()
 	if (rc != SQLITE_DONE) {
 		throw sql_connection_error(sqlite3_errcode(connection), sqlite3_errmsg(connection));
 	}
+}
+
+void SQLConnection::versionCheck()
+{
+	if (connection == nullptr) {
+		throw sql_connection_error(10001, "FileGrabber SQL Error: Invalid connection");
+	}
+
+	wstring sql;
+	if (!checkTableExistence(L"fg_ver")) {
+		sql = L"CREATE TABLE fg_ver(ID INT NOT NULL, Name VARCHAR(50) NOT NULL, Value VARCHAR(100));";
+		sqlite3_step16(sql);
+		sql = L"INSERT INTO fg_ver (ID, Name, Value) VALUES(1,'DatabaseVersion','0.2.2');";
+		sqlite3_step16(sql);
+	}
+	else {
+
+	}
+}
+
+int SQLConnection::sqlite3_step16(const wstring& sql) const
+{
+	int rc;
+	sqlite3_stmt* stmt;
+
+	rc = sqlite3_prepare16_v2(connection, sql.c_str(), static_cast<int>(sql.length() * 2), &stmt, nullptr);
+	if (rc != SQLITE_OK) {
+		throw sql_connection_error(sqlite3_errcode(connection), sqlite3_errmsg(connection));
+	}
+	rc = sqlite3_step(stmt);
+	sqlite3_finalize(stmt);
+	if (rc != SQLITE_DONE) {
+		throw sql_connection_error(sqlite3_errcode(connection), sqlite3_errmsg(connection));
+	}
+
+	return rc;
 }
 
 

@@ -2,17 +2,17 @@
 #include "ApplicationInformation.h"
 using namespace std;
 
-_tstring ApplicationInformation::getVersion()
+wstring ApplicationInformation::getVersion()
 {
-	return TEXT("0.2.1");
+	return L"0.2.3";
 }
 
-std::string ApplicationInformation::getANSIVersion()
+string ApplicationInformation::getANSIVersion()
 {
-	return "0.2.1";
+	return "0.2.3";
 }
 
 unsigned int ApplicationInformation::getBuild()
 {
-	return 9;
+	return 11;
 }
