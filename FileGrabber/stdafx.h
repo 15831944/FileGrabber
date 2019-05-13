@@ -36,6 +36,7 @@ typedef unsigned long ulong;
 #define WM_NOTIFYMSG				WM_USER
 #define IDN_SERVICE					1501
 #define IDN_EXIT					1502
+#define IDN_ENABLECOPY				1503
 
 struct FileData {
 	TCHAR Directory[_MAX_PATH];

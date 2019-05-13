@@ -7,6 +7,8 @@
 #include <zlib.h>
 #include <vector>
 #include "Timer.h"
+#include "ApplicationInformation.h"
+#include "Log.h"
 using namespace std;
 namespace fs = std::filesystem;
 
@@ -41,12 +43,14 @@ void FileCopyer::ListFile(shared_ptr<list<FileData>> plist)
 	FILE* file;
 	_tfopen_s(&file, (fn + TEXT("/flist.ifld")).c_str(), TEXT("w"));
 	Device::DiskInformation info = device.GetDiskInformation();
-	_ftprintf_s(file, TEXT("Basic Information\n--------------------------\nDrive Letter: %c\nLabel: %s\nSN: %lu\nFileSystem: %s\nSpace: %llu\n\nFile List\n--------------------------\n"),
+	_ftprintf_s(file, L"FileGrabber %s Generated FileList (*.ifld) File\nBasic Information\n--------------------------\nDrive Letter: %c\nLabel: %s\nSN: %lu\n" \
+		L"FileSystem: %s\nSpace: %llu\n\nFile List\n--------------------------\n", FG_VERSION_PTR,
 		info.DriveLetter, info.Label.c_str(), info.VolumeSerialNumber, info.FileSystem.c_str(), info.TotalSpace);
 	for (list<FileData>::const_iterator it = plist->cbegin(); it != plist->cend(); ++it) {
 		_ftprintf_s(file, L"%s/%s\n", it->Directory, it->name);
 	}
 	fclose(file);
+	LOG->i(L"FileList file sucessfully generated.");
 }
 
 void FileCopyer::Copy()
@@ -61,17 +65,18 @@ void FileCopyer::Copy()
 	vector<FileData> _copy;
 	uint64 totalSize = 0;
 	int i = 0;
-	for (list<FileData>::const_iterator it = paths->cbegin(); i < 20 && it != paths->cend(); ++it, ++i) {
-		totalSize += it->size;
+	for (list<FileData>::const_iterator it = paths->cbegin(); i < 50 && it != paths->cend(); ++it, ++i) {
 		_copy.push_back(*it);
-		if (totalSize > 10 * 1024 * 1024) {
+		if (totalSize + it->size > 20 * 1024 * 1024) {
 			break;
 		}
+		totalSize += it->size;
 	}
 	for (const FileData& data : _copy) {
 		wstring path = wstring(data.Directory) + TEXT("/") + data.name;
 		fs::copy(fs::path(path), fs::path(fn + TEXT("/") + data.name));
 	}
+	LOG->i(wstring(L"File copying sucessful. ") + to_wstring(i) + L" files of " + to_wstring(totalSize) + L" bytes copied.");
 }
 
 void FileCopyer::Encrypt() {

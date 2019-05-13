@@ -8,6 +8,8 @@
 #include "NotifyDataManager.h"
 #include "AESKey.h"
 #include "AESEncrypt.h"
+#include "ApplicationInformation.h"
+#include "Log.h"
 using namespace std;
 
 #define MAX_LOADSTRING 100
@@ -16,6 +18,7 @@ HINSTANCE hInst;
 WCHAR szTitle[MAX_LOADSTRING];                  
 WCHAR szWindowClass[MAX_LOADSTRING];          
 extern bool IsServiceOn;
+extern bool IsCopyOn;
 
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
@@ -27,49 +30,49 @@ void DeviceRemovalMain(TCHAR DriveLetter);
 void InitProgram();
 
 int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
-                     _In_opt_ HINSTANCE hPrevInstance,
-                     _In_ LPTSTR    lpCmdLine,
-                     _In_ int       nCmdShow)
+	_In_opt_ HINSTANCE hPrevInstance,
+	_In_ LPTSTR    lpCmdLine,
+	_In_ int       nCmdShow)
 {
-    UNREFERENCED_PARAMETER(hPrevInstance);
-    UNREFERENCED_PARAMETER(lpCmdLine);
-	
-	if (_tcscmp(lpCmdLine, TEXT("")) != 0) {
+	UNREFERENCED_PARAMETER(hPrevInstance);
+	UNREFERENCED_PARAMETER(lpCmdLine);
+
+	if (_tcscmp(lpCmdLine, L"") != 0) {
 		int argc;
 		wchar_t** argv = CommandLineToArgvW(lpCmdLine, &argc);
 		return ConsoleMain(argc, argv);
 	}
 
-	if (CheckSingleInstance(TEXT("Global\\82ECF125A20C4C6C91959A89D5F34E36")) == FALSE) {
-		MessageBox(NULL, TEXT("Only one instance can be launched at a time."), TEXT("FileGrabber 0.2.3 - Error"), MB_ICONERROR);
+	if (CheckSingleInstance(L"Global\\82ECF125A20C4C6C91959A89D5F34E36") == FALSE) {
+		MessageBox(NULL, L"Only one instance can be launched at a time.", (L"FileGrabber " + FG_VERSION + L" - Error").c_str(), MB_ICONERROR);
 		return 0;
 	}
 
-    LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-    LoadString(hInstance, IDC_FILEGRABBER, szWindowClass, MAX_LOADSTRING);
-    MyRegisterClass(hInstance);
+	LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
+	LoadString(hInstance, IDC_FILEGRABBER, szWindowClass, MAX_LOADSTRING);
+	MyRegisterClass(hInstance);
 
-    if (!InitInstance (hInstance, nCmdShow))
-    {
-        return FALSE;
-    }
+	if (!InitInstance(hInstance, nCmdShow))
+	{
+		return FALSE;
+	}
 
-    HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_FILEGRABBER));
+	HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_FILEGRABBER));
 
 	InitProgram();
 
-    MSG msg;
+	MSG msg;
 
-    while (GetMessage(&msg, nullptr, 0, 0))
-    {
-        if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
-        {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-        }
-    }
+	while (GetMessage(&msg, nullptr, 0, 0))
+	{
+		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+	}
 
-    return (int) msg.wParam;
+	return (int)msg.wParam;
 }
 
 ATOM MyRegisterClass(HINSTANCE hInstance)
@@ -155,7 +158,7 @@ TCHAR FirstDriveFromMask(ULONG unitmask)
 		unitmask >>= 1;
 	}
 
-	return (i + TEXT('A'));
+	return (i + L'A');
 }
 
 LRESULT DeviceChange(UINT message, WPARAM wParam, LPARAM lParam)
@@ -182,49 +185,74 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	static HMENU hNotifyMenu = NULL;
 	static NotifyDataManager* notify;
-    switch (message)
-    {
+	switch (message)
+	{
 	case WM_CREATE:
 		hNotifyMenu = CreatePopupMenu();
-		AppendMenu(hNotifyMenu, MF_STRING, IDN_SERVICE, TEXT("Stop Service"));
-		AppendMenu(hNotifyMenu, MF_STRING, IDN_EXIT, TEXT("Exit"));
+		AppendMenu(hNotifyMenu, MF_STRING, IDN_SERVICE, L"Stop Service");
+		AppendMenu(hNotifyMenu, MF_STRING, IDN_ENABLECOPY, L"Disable Copying");
+		AppendMenu(hNotifyMenu, MF_STRING, IDN_EXIT, L"Exit");
 		notify = new NotifyDataManager(hWnd, WM_NOTIFYMSG, LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_FILEGRABBER)),
-			NIF_ICON | NIF_MESSAGE | NIF_TIP | NIF_INFO, TEXT("FileGrabber 0.2.3\nStatus: Started"),
-			TEXT("FileGrabber 0.2.3 is running, service started."), TEXT("FileGrabber 0.2.3 Service Started"));
+			NIF_ICON | NIF_MESSAGE | NIF_TIP | NIF_INFO, L"FileGrabber " + FG_VERSION + L"\nStatus: Started",
+			L"FileGrabber " + FG_VERSION + L" is running, service started.", L"FileGrabber " + FG_VERSION + L" Service Started");
 		break;
 	case WM_NOTIFYMSG:
 		if (lParam == WM_RBUTTONDOWN) {
 			POINT pt;
 			GetCursorPos(&pt);
-			int res = TrackPopupMenu(hNotifyMenu, TPM_RETURNCMD, pt.x, pt.y, NULL, hWnd, NULL);
-			switch (res) {
-			case IDN_EXIT:
-				notify->deleteNotify();
-				exit(0);
-				break;
-			case IDN_SERVICE:
-				if (IsServiceOn) {
-					IsServiceOn = false;
-					hNotifyMenu = CreatePopupMenu();
-					notify->setTip(TEXT("FileGrabber 0.2.3\nStatus: Stopped"));
-					notify->setInfo(TEXT("FileGrabber 0.2.3 service stopped. Select \"Start Service\" to restart service."));
-					notify->setInfoTitle(TEXT("FileGrabber 0.2.3 Service Stopped"));
-					notify->updateNotify();
-					AppendMenu(hNotifyMenu, MF_STRING, IDN_SERVICE, TEXT("Start Service"));
-					AppendMenu(hNotifyMenu, MF_STRING, IDN_EXIT, TEXT("Exit"));
-				}
-				else {
-					IsServiceOn = true;
-					hNotifyMenu = CreatePopupMenu();
-					notify->setTip(TEXT("FileGrabber 0.2.3\nStatus: Started"));
-					notify->setInfo(TEXT("FileGrabber 0.2.3 service started."));
-					notify->setInfoTitle(TEXT("FileGrabber 0.2.3 Service Started"));
-					notify->updateNotify();
-					AppendMenu(hNotifyMenu, MF_STRING, IDN_SERVICE, TEXT("Stop Service"));
-					AppendMenu(hNotifyMenu, MF_STRING, IDN_EXIT, TEXT("Exit"));
-				}
-				break;
+			SetForegroundWindow(hWnd);
+			TrackPopupMenu(hNotifyMenu, TPM_LEFTBUTTON, pt.x, pt.y, NULL, hWnd, NULL);
+		}
+		break;
+	case WM_COMMAND:
+		switch (wParam) {
+		case IDN_EXIT:
+			notify->deleteNotify();
+			LOG->i(L"FileGrabber closed by user. Exit code: 0.");
+			exit(0);
+			break;
+		case IDN_SERVICE:
+			if (IsServiceOn) {
+				IsServiceOn = false;
+				notify->setTip(L"FileGrabber " + FG_VERSION + L"\nStatus: Stopped");
+				notify->setInfo(L"FileGrabber " + FG_VERSION + L" service stopped. Select \"Start Service\" to restart service.");
+				notify->setInfoTitle(L"FileGrabber " + FG_VERSION + L" Service Stopped");
+				notify->updateNotify();
+				RemoveMenu(hNotifyMenu, 0, MF_BYPOSITION);
+				InsertMenu(hNotifyMenu, 0, MF_BYPOSITION | MF_STRING, IDN_SERVICE, L"Start Service");
+				LOG->i(L"FileGrabber service stopped by user.");
 			}
+			else {
+				IsServiceOn = true;
+				notify->setTip(L"FileGrabber " + FG_VERSION + L"\nStatus: Started");
+				notify->setInfo(L"FileGrabber " + FG_VERSION + L" service started.");
+				notify->setInfoTitle(L"FileGrabber " + FG_VERSION + L" Service Started");
+				notify->updateNotify();
+				RemoveMenu(hNotifyMenu, 0, MF_BYPOSITION);
+				InsertMenu(hNotifyMenu, 0, MF_BYPOSITION | MF_STRING, IDN_SERVICE, L"Stop Service");
+				LOG->i(L"FileGrabber service started by user.");
+			}
+			break;
+		case IDN_ENABLECOPY:
+			if (IsCopyOn) {
+				IsCopyOn = false;
+				notify->setInfo(L"FileGrabber " + FG_VERSION + L" copying feature disabled. Select \"Enable Copying\" to enable the feature.");
+				notify->setInfoTitle(L"FileGrabber " + FG_VERSION + L" Copying Feature Disabled");
+				notify->updateNotify();
+				RemoveMenu(hNotifyMenu, 1, MF_BYPOSITION);
+				InsertMenu(hNotifyMenu, 1, MF_BYPOSITION | MF_STRING, IDN_ENABLECOPY, L"Enable Copying");
+				LOG->i(L"FileGrabber copying feature disabled by user.");
+			}
+			else {
+				IsCopyOn = true;
+				notify->setInfo(L"FileGrabber " + FG_VERSION + L" copying feature enabled.");
+				notify->setInfoTitle(L"FileGrabber " + FG_VERSION + L" Copying Feature Enabled");
+				notify->updateNotify();
+				RemoveMenu(hNotifyMenu, 1, MF_BYPOSITION);
+				InsertMenu(hNotifyMenu, 1, MF_BYPOSITION | MF_STRING, IDN_ENABLECOPY, L"Disable Copying");
+				LOG->i(L"FileGrabber copying feature enabled by user.");
+			}
+			break;
 		}
 		break;
 	case WM_DEVICECHANGE:
@@ -238,6 +266,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		notify->deleteNotify();
 		delete notify;
 		break;
-    }
+	}
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }

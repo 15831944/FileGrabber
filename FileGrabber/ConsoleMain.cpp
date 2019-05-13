@@ -16,14 +16,14 @@ int ConsoleMain(int argc, wchar_t* argv[]) {
 		return ProcessConsoleMain(argc, argv);
 	}
 	else {
-		MessageBoxW(NULL, L"Invaild param. Type \'-c\' to open FileGrabber console tool.", L"FileGrabber 0.2.3 - Error", MB_ICONERROR);
+		MessageBoxW(NULL, L"Invaild param. Type \'-c\' to open FileGrabber console tool.", (L"FileGrabber " + FG_VERSION + L" - Error").c_str(), MB_ICONERROR);
 		return -1;
 	}
 }
 
 int ProcessConsoleMain(int argc, wchar_t* argv[]) {
 	AllocConsole();
-	SetConsoleTitleW(L"FileGrabber 0.2.3 Console Tool");
+	SetConsoleTitleW((L"FileGrabber " + FG_VERSION + L" Console Tool").c_str());
 	freopen("CONOUT$", "w", stdout);
 	freopen("CONIN$", "r", stdin);
 	wcout << L"FileGrabber " << FG_VERSION << L" Console Tool" << endl;
