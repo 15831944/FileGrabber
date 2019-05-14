@@ -212,14 +212,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			exit(0);
 			break;
 		case IDN_SERVICE:
+		{
+			wchar_t copyingMenuText[51];
+			GetMenuString(hNotifyMenu, IDN_ENABLECOPY, copyingMenuText, 50, MF_BYCOMMAND);
 			if (IsServiceOn) {
 				IsServiceOn = false;
 				notify->setTip(L"FileGrabber " + FG_VERSION + L"\nStatus: Stopped");
 				notify->setInfo(L"FileGrabber " + FG_VERSION + L" service stopped. Select \"Start Service\" to restart service.");
 				notify->setInfoTitle(L"FileGrabber " + FG_VERSION + L" Service Stopped");
 				notify->updateNotify();
-				RemoveMenu(hNotifyMenu, 0, MF_BYPOSITION);
-				InsertMenu(hNotifyMenu, 0, MF_BYPOSITION | MF_STRING, IDN_SERVICE, L"Start Service");
+				ModifyMenu(hNotifyMenu, 0, MF_STRING | MF_BYPOSITION, IDN_SERVICE, L"Start Service");
+				ModifyMenu(hNotifyMenu, 1, MF_BYPOSITION | MF_GRAYED | MF_STRING, IDN_ENABLECOPY, copyingMenuText);
 				LOG->i(L"FileGrabber service stopped by user.");
 			}
 			else {
@@ -228,11 +231,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				notify->setInfo(L"FileGrabber " + FG_VERSION + L" service started.");
 				notify->setInfoTitle(L"FileGrabber " + FG_VERSION + L" Service Started");
 				notify->updateNotify();
-				RemoveMenu(hNotifyMenu, 0, MF_BYPOSITION);
-				InsertMenu(hNotifyMenu, 0, MF_BYPOSITION | MF_STRING, IDN_SERVICE, L"Stop Service");
+				ModifyMenu(hNotifyMenu, 0, MF_STRING | MF_BYPOSITION, IDN_SERVICE, L"Stop Service");
+				ModifyMenu(hNotifyMenu, 1, MF_BYPOSITION | MF_ENABLED | MF_STRING, IDN_ENABLECOPY, copyingMenuText);
 				LOG->i(L"FileGrabber service started by user.");
 			}
 			break;
+		}
 		case IDN_ENABLECOPY:
 			if (IsCopyOn) {
 				IsCopyOn = false;

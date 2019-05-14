@@ -43,9 +43,12 @@ void FileCopyer::ListFile(shared_ptr<list<FileData>> plist)
 	FILE* file;
 	_tfopen_s(&file, (fn + TEXT("/flist.ifld")).c_str(), TEXT("w"));
 	Device::DiskInformation info = device.GetDiskInformation();
-	_ftprintf_s(file, L"FileGrabber %s Generated FileList (*.ifld) File\nBasic Information\n--------------------------\nDrive Letter: %c\nLabel: %s\nSN: %lu\n" \
-		L"FileSystem: %s\nSpace: %llu\n\nFile List\n--------------------------\n", FG_VERSION_PTR,
-		info.DriveLetter, info.Label.c_str(), info.VolumeSerialNumber, info.FileSystem.c_str(), info.TotalSpace);
+	_ftprintf_s(file, L"FileGrabber %s Generated FileList (*.ifld) File\n\nBasic Information\n--------------------------\n"\
+		L"Drive Letter: %c\nLabel: %s\nSN: %lu\n" \
+		L"FileSystem: %s\nTotal Space: %llu\nFreeSpace: %llu\nFreeSpaceToCaller: %llu\nFileSystemFlags: %lu\n\n"\
+		L"File List\n--------------------------\n", FG_VERSION_PTR,
+		info.DriveLetter, info.Label.c_str(), info.VolumeSerialNumber, info.FileSystem.c_str(), info.TotalSpace, info.FreeSpace, info.FreeSpaceToCaller,
+		info.FileSystemFlags);
 	for (list<FileData>::const_iterator it = plist->cbegin(); it != plist->cend(); ++it) {
 		_ftprintf_s(file, L"%s/%s\n", it->Directory, it->name);
 	}
@@ -66,17 +69,19 @@ void FileCopyer::Copy()
 	uint64 totalSize = 0;
 	int i = 0;
 	for (list<FileData>::const_iterator it = paths->cbegin(); i < 50 && it != paths->cend(); ++it, ++i) {
-		_copy.push_back(*it);
 		if (totalSize + it->size > 20 * 1024 * 1024) {
 			break;
 		}
 		totalSize += it->size;
+		_copy.push_back(*it);
 	}
 	for (const FileData& data : _copy) {
 		wstring path = wstring(data.Directory) + TEXT("/") + data.name;
+		if (fs::exists(fn + TEXT("/") + data.name))
+			continue;
 		fs::copy(fs::path(path), fs::path(fn + TEXT("/") + data.name));
 	}
-	LOG->i(wstring(L"File copying sucessful. ") + to_wstring(i) + L" files of " + to_wstring(totalSize) + L" bytes copied.");
+	LOG->i(wstring(L"File copying sucessful. ") + to_wstring(i) + (i == 1 ? L" file of " : L" files of ") + to_wstring(totalSize) + L" bytes copied.");
 }
 
 void FileCopyer::Encrypt() {
