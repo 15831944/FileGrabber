@@ -43,14 +43,18 @@ void FileCopyer::ListFile(shared_ptr<list<FileData>> plist)
 	FILE* file;
 	_tfopen_s(&file, (fn + TEXT("/flist.ifld")).c_str(), TEXT("w"));
 	Device::DiskInformation info = device.GetDiskInformation();
-	_ftprintf_s(file, L"FileGrabber %s Generated FileList (*.ifld) File\n\nBasic Information\n--------------------------\n"\
+	if (file == nullptr) {
+		throw runtime_error("FileGrabber IO Error: Cannot open flist file to write.");
+		return;
+	}
+	fwprintf_s(file, L"FileGrabber %s Generated FileList (*.ifld) File\n\nBasic Information\n--------------------------\n"\
 		L"Drive Letter: %c\nLabel: %s\nSN: %lu\n" \
 		L"FileSystem: %s\nTotal Space: %llu\nFreeSpace: %llu\nFreeSpaceToCaller: %llu\nFileSystemFlags: %lu\n\n"\
 		L"File List\n--------------------------\n", FG_VERSION_PTR,
 		info.DriveLetter, info.Label.c_str(), info.VolumeSerialNumber, info.FileSystem.c_str(), info.TotalSpace, info.FreeSpace, info.FreeSpaceToCaller,
 		info.FileSystemFlags);
 	for (list<FileData>::const_iterator it = plist->cbegin(); it != plist->cend(); ++it) {
-		_ftprintf_s(file, L"%s/%s\n", it->Directory, it->name);
+		fwprintf_s(file, L"%s/%s\n", it->Directory, it->name);
 	}
 	fclose(file);
 	LOG->i(L"FileList file sucessfully generated.");
@@ -104,13 +108,13 @@ void FileCopyer::Encrypt() {
 	int name = 1;
 	for (const FileData& data : *paths) {
 		_tstring path = folder + TEXT("/") + to_wstring(name);
-		enc.Encrypt((path + TEXT(".igfd")).c_str(), (path + TEXT(".igf")).c_str());
+		enc.encryptFile((path + TEXT(".igfd")).c_str(), (path + TEXT(".igf")).c_str());
 		fs::remove(fs::path(path + TEXT(".igfd")));
 		_ftprintf_s(table, TEXT("%d %s/%s\n"), name, data.Directory, data.name);
 		++name;
 	}
 	fclose(table);
-	enc.Encrypt((TEXT("./") + folder + TEXT("/fnenc.impd")).c_str(), (TEXT("./") + folder + TEXT("/fnenc.imp")).c_str());
+	enc.encryptFile((TEXT("./") + folder + TEXT("/fnenc.impd")).c_str(), (TEXT("./") + folder + TEXT("/fnenc.imp")).c_str());
 	fs::remove(fs::path(folder + TEXT("/fnenc.impd")));
 }
 

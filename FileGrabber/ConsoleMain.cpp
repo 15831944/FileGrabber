@@ -38,7 +38,7 @@ void PasswordVerify() {
 	while (true) {
 		wcout << L"Enter Password: ";
 		getline(wcin, password);
-		if (enc.EncryptString(password) == L"c09496084c719c4843eca19340fd2f5b") {
+		if (enc.encryptString(password).toString() == L"c09496084c719c4843eca19340fd2f5b") {
 			break;
 		}
 		wcout << L"Error #1: Incorrect password. You must input the correct password to continue." << endl << endl;

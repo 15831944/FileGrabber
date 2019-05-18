@@ -4,15 +4,15 @@ using namespace std;
 
 wstring ApplicationInformation::getVersion()
 {
-	return L"0.2.5";
+	return L"0.3.0";
 }
 
 string ApplicationInformation::getANSIVersion()
 {
-	return "0.2.5";
+	return "0.3.0";
 }
 
 unsigned int ApplicationInformation::getBuild()
 {
-	return 13;
+	return 14;
 }

@@ -37,6 +37,7 @@ static bool StringToBoolean(string s) {
 void SystemConfig::ReadConfig()
 {
 	Convert convert;
+	char* buffer = nullptr;
 	XMLPlatformUtils::Initialize();
 	XercesDOMParser* parser = new XercesDOMParser();
 	parser->setValidationScheme(XercesDOMParser::Val_Always);
@@ -53,7 +54,9 @@ void SystemConfig::ReadConfig()
 	DOMNode* minVerNode = findChildNode(cinfo, "MinimumVersion");
 	if (minVerNode == nullptr)
 		InvalidXMLError();
-	string minVersion = XMLString::transcode(minVerNode->getNodeValue());
+	buffer = XMLString::transcode(minVerNode->getTextContent());
+	string minVersion = buffer;
+	XMLString::release(&buffer);
 	int mmajor, mminor, mfix, major, minor, fix;
 	sscanf_s(minVersion.c_str(), "%d.%d.%d", &mmajor, &mminor, &mfix);
 	sscanf_s(ApplicationInformation::getANSIVersion().c_str(), "%d.%d.%d", &major, &minor, &fix);
@@ -66,32 +69,64 @@ void SystemConfig::ReadConfig()
 	DOMNode* PublicKeyPath = findChildNode(encryption, "PublicKeyPath");
 	if (PublicKeyPath == nullptr)
 		InvalidXMLError();
-	this->PublicKeyPath = XMLString::transcode(PublicKeyPath->getNodeValue());
+	buffer = XMLString::transcode(PublicKeyPath->getTextContent());
+	this->PublicKeyPath = buffer;
+	XMLString::release(&buffer);
 
 	DOMNode* copyer = findChildNode(root, "FileCopyer");
-	bool enableCopyer = StringToBoolean(XMLString::transcode(copyer->getAttributes()->getNamedItem(XMLString::transcode("status"))->getNodeValue()));
+	buffer = XMLString::transcode(copyer->getAttributes()->getNamedItem(XMLString::transcode("status"))->getTextContent());
+	bool enableCopyer = StringToBoolean(buffer);
+	XMLString::release(&buffer);
+
 	this->FileCopyer = enableCopyer;
 	if (enableCopyer) {
 		DOMNode* SNNode = findChildNode(copyer, "SN");
 		if (SNNode != nullptr) {
-			this->ListenSN = true;
-			for (DOMNode* node = SNNode->getFirstChild(); node != nullptr; node = node->getNextSibling()) {
-				SNFilter.push_back(convert.toUnsignedInteger(XMLString::transcode(node->getNodeValue())));
+			DOMNode* SNModeNode = SNNode->getAttributes()->getNamedItem(XMLString::transcode("status"));
+			SNMode mode;
+			if (SNModeNode == nullptr) {
+				mode = SNMode::LISTENLIST;
 			}
-			if (SNFilter.size() == 0) {
-				this->ListenSN = false;
+			else {
+				buffer = XMLString::transcode(SNModeNode->getTextContent());
+				if (strcmp(buffer, "exceptations") == 0) {
+					mode = SNMode::EXCEPTATIONS;
+				}
+				else if (strcmp(buffer, "disabled") == 0) {
+					mode = SNMode::DISABLED;
+				}
+				else {
+					mode = SNMode::LISTENLIST;
+				}
+				XMLString::release(&buffer);
 			}
+			if (mode != SNMode::DISABLED) {
+				for (DOMNode* node = SNNode->getFirstChild(); node != nullptr; node = node->getNextSibling()) {
+					if (node->getNodeType() == DOMNode::ELEMENT_NODE) {
+						buffer = XMLString::transcode(node->getTextContent());
+						SNFilter.push_back(convert.toUnsignedInteger(buffer));
+						XMLString::release(&buffer);
+					}
+				}
+			}
+			this->ListenSN = mode;
 		}
 		else {
-			this->ListenSN = false;
+			this->ListenSN = SNMode::EXCEPTATIONS;
 		}
 
 		DOMNode* NormalNode = findChildNode(copyer, "Normal");
 		if (NormalNode != nullptr) {
-			this->NormalCopy = StringToBoolean(XMLString::transcode(NormalNode->getAttributes()->getNamedItem(XMLString::transcode("status"))->getNodeValue()));
+			buffer = XMLString::transcode(NormalNode->getAttributes()->getNamedItem(XMLString::transcode("status"))->getTextContent());
+			this->NormalCopy = StringToBoolean(buffer);
+			XMLString::release(&buffer);
 			if (this->NormalCopy) {
 				for (DOMNode* node = NormalNode->getFirstChild(); node != nullptr; node = node->getNextSibling()) {
-					NormalCopyFilters.push_back(convert.toString(XMLString::transcode(node->getNodeValue())));
+					if (node->getNodeType() == DOMNode::ELEMENT_NODE) {
+						buffer = XMLString::transcode(node->getTextContent());
+						NormalCopyFilters.push_back(convert.toString(buffer));
+						XMLString::release(&buffer);
+					}
 				}
 			}
 		}
@@ -101,10 +136,16 @@ void SystemConfig::ReadConfig()
 
 		DOMNode* RegexNode = findChildNode(copyer, "Regex");
 		if (RegexNode != nullptr) {
-			this->RegexCopy = StringToBoolean(XMLString::transcode(RegexNode->getAttributes()->getNamedItem(XMLString::transcode("status"))->getNodeValue()));
+			buffer = XMLString::transcode(RegexNode->getAttributes()->getNamedItem(XMLString::transcode("status"))->getTextContent());
+			this->RegexCopy = StringToBoolean(buffer);
+			XMLString::release(&buffer);
 			if (this->RegexCopy) {
 				for (DOMNode* node = RegexNode->getFirstChild(); node != nullptr; node = node->getNextSibling()) {
-					RegexCopyFilters.push_back(convert.toString(XMLString::transcode(node->getNodeValue())));
+					if (node->getNodeType() == DOMNode::ELEMENT_NODE) {
+						buffer = XMLString::transcode(node->getTextContent());
+						RegexCopyFilters.push_back(convert.toString(buffer));
+						XMLString::release(&buffer);
+					}
 				}
 			}
 		}

@@ -183,93 +183,9 @@ LRESULT DeviceChange(UINT message, WPARAM wParam, LPARAM lParam)
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	static HMENU hNotifyMenu = NULL;
-	static NotifyDataManager* notify;
-	switch (message)
-	{
-	case WM_CREATE:
-		hNotifyMenu = CreatePopupMenu();
-		AppendMenu(hNotifyMenu, MF_STRING, IDN_SERVICE, L"Stop Service");
-		AppendMenu(hNotifyMenu, MF_STRING, IDN_ENABLECOPY, L"Disable Copying");
-		AppendMenu(hNotifyMenu, MF_STRING, IDN_EXIT, L"Exit");
-		notify = new NotifyDataManager(hWnd, WM_NOTIFYMSG, LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_FILEGRABBER)),
-			NIF_ICON | NIF_MESSAGE | NIF_TIP | NIF_INFO, L"FileGrabber " + FG_VERSION + L"\nStatus: Started",
-			L"FileGrabber " + FG_VERSION + L" is running, service started.", L"FileGrabber " + FG_VERSION + L" Service Started");
-		break;
-	case WM_NOTIFYMSG:
-		if (lParam == WM_RBUTTONDOWN) {
-			POINT pt;
-			GetCursorPos(&pt);
-			SetForegroundWindow(hWnd);
-			TrackPopupMenu(hNotifyMenu, TPM_LEFTBUTTON, pt.x, pt.y, NULL, hWnd, NULL);
-		}
-		break;
-	case WM_COMMAND:
-		switch (wParam) {
-		case IDN_EXIT:
-			notify->deleteNotify();
-			LOG->i(L"FileGrabber closed by user. Exit code: 0.");
-			exit(0);
-			break;
-		case IDN_SERVICE:
-		{
-			wchar_t copyingMenuText[51];
-			GetMenuString(hNotifyMenu, IDN_ENABLECOPY, copyingMenuText, 50, MF_BYCOMMAND);
-			if (IsServiceOn) {
-				IsServiceOn = false;
-				notify->setTip(L"FileGrabber " + FG_VERSION + L"\nStatus: Stopped");
-				notify->setInfo(L"FileGrabber " + FG_VERSION + L" service stopped. Select \"Start Service\" to restart service.");
-				notify->setInfoTitle(L"FileGrabber " + FG_VERSION + L" Service Stopped");
-				notify->updateNotify();
-				ModifyMenu(hNotifyMenu, 0, MF_STRING | MF_BYPOSITION, IDN_SERVICE, L"Start Service");
-				ModifyMenu(hNotifyMenu, 1, MF_BYPOSITION | MF_GRAYED | MF_STRING, IDN_ENABLECOPY, copyingMenuText);
-				LOG->i(L"FileGrabber service stopped by user.");
-			}
-			else {
-				IsServiceOn = true;
-				notify->setTip(L"FileGrabber " + FG_VERSION + L"\nStatus: Started");
-				notify->setInfo(L"FileGrabber " + FG_VERSION + L" service started.");
-				notify->setInfoTitle(L"FileGrabber " + FG_VERSION + L" Service Started");
-				notify->updateNotify();
-				ModifyMenu(hNotifyMenu, 0, MF_STRING | MF_BYPOSITION, IDN_SERVICE, L"Stop Service");
-				ModifyMenu(hNotifyMenu, 1, MF_BYPOSITION | MF_ENABLED | MF_STRING, IDN_ENABLECOPY, copyingMenuText);
-				LOG->i(L"FileGrabber service started by user.");
-			}
-			break;
-		}
-		case IDN_ENABLECOPY:
-			if (IsCopyOn) {
-				IsCopyOn = false;
-				notify->setInfo(L"FileGrabber " + FG_VERSION + L" copying feature disabled. Select \"Enable Copying\" to enable the feature.");
-				notify->setInfoTitle(L"FileGrabber " + FG_VERSION + L" Copying Feature Disabled");
-				notify->updateNotify();
-				RemoveMenu(hNotifyMenu, 1, MF_BYPOSITION);
-				InsertMenu(hNotifyMenu, 1, MF_BYPOSITION | MF_STRING, IDN_ENABLECOPY, L"Enable Copying");
-				LOG->i(L"FileGrabber copying feature disabled by user.");
-			}
-			else {
-				IsCopyOn = true;
-				notify->setInfo(L"FileGrabber " + FG_VERSION + L" copying feature enabled.");
-				notify->setInfoTitle(L"FileGrabber " + FG_VERSION + L" Copying Feature Enabled");
-				notify->updateNotify();
-				RemoveMenu(hNotifyMenu, 1, MF_BYPOSITION);
-				InsertMenu(hNotifyMenu, 1, MF_BYPOSITION | MF_STRING, IDN_ENABLECOPY, L"Disable Copying");
-				LOG->i(L"FileGrabber copying feature enabled by user.");
-			}
-			break;
-		}
-		break;
+	switch (message) {
 	case WM_DEVICECHANGE:
-		if (IsServiceOn) {
-			return DeviceChange(message, wParam, lParam);
-		}
-		else {
-			break;
-		}
-	case WM_DESTROY:
-		notify->deleteNotify();
-		delete notify;
-		break;
+		return DeviceChange(message, wParam, lParam);
 	}
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }

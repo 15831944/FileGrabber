@@ -11,8 +11,13 @@ public:
 	static SystemConfig* getInstance();
 	void ReadConfig();
 	std::string PublicKeyPath;
-	bool FileCopyer, ListenSN, NormalCopy, RegexCopy;
-	std::vector<std::_tstring> NormalCopyFilters, RegexCopyFilters;
+	enum class SNMode {
+		DISABLED,
+		EXCEPTATIONS,
+		LISTENLIST
+	}ListenSN;
+	bool FileCopyer, NormalCopy, RegexCopy;
+	std::vector<std::wstring> NormalCopyFilters, RegexCopyFilters;
 	std::vector<unsigned int> SNFilter;
 protected:
 	SystemConfig();

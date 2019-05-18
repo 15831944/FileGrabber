@@ -6,9 +6,13 @@ class MD5Encrypt
 public:
 	MD5Encrypt();
 	struct MD5Hash {
-		unsigned char _data[32];
+		MD5Hash();
+		unsigned char _data[16];
+		operator unsigned char* ();
+		std::wstring toString();
+		std::string toANSIString();
 	};
-	std::wstring EncryptString(const std::wstring& val);
-	MD5Hash HashString(const std::wstring& val);
+	MD5Hash encryptString(const std::wstring& val);
+	MD5Hash encryptFile(const std::wstring& path);
+	MD5Hash encrypt(const unsigned char* data, size_t byteCount);
 };
-

