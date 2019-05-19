@@ -72,7 +72,7 @@ void FileCopyer::Copy()
 	folderName = nullptr;
 	vector<FileData> _copy;
 	uint64 totalSize = 0;
-	int i = 0;
+	uint i = 0;
 	for (list<FileData>::const_iterator it = paths->cbegin(); i < SystemConfig::getInstance()->LimitCount && it != paths->cend(); ++it, ++i) {
 		if (totalSize + it->size > SystemConfig::getInstance()->LimitSize) {
 			break;
