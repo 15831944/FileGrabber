@@ -36,6 +36,10 @@ static bool StringToBoolean(string s) {
 
 void SystemConfig::ReadConfig()
 {
+	SNFilter.clear();
+	NormalCopyFilters.clear();
+	RegexCopyFilters.clear();
+
 	Convert convert;
 	char* buffer = nullptr;
 	XMLPlatformUtils::Initialize();
@@ -80,9 +84,9 @@ void SystemConfig::ReadConfig()
 
 	this->FileCopyer = enableCopyer;
 	if (enableCopyer) {
-		DOMNode* SNNode = findChildNode(copyer, "SN");
+		DOMNode* SNNode = findChildNode(copyer, "SNFilter");
 		if (SNNode != nullptr) {
-			DOMNode* SNModeNode = SNNode->getAttributes()->getNamedItem(XMLString::transcode("status"));
+			DOMNode* SNModeNode = SNNode->getAttributes()->getNamedItem(XMLString::transcode("mode"));
 			SNMode mode;
 			if (SNModeNode == nullptr) {
 				mode = SNMode::LISTENLIST;
@@ -156,6 +160,19 @@ void SystemConfig::ReadConfig()
 		if (!RegexCopy && !NormalCopy) {
 			this->FileCopyer = false;
 		}
+
+		DOMNode* LimitNode = findChildNode(copyer, "Limit");
+		if (LimitNode == nullptr) {
+			InvalidXMLError();
+		}
+		DOMNode *LimitSizeNode = LimitNode->getAttributes()->getNamedItem(XMLString::transcode("maxsize")),
+			*LimitCountNode = LimitNode->getAttributes()->getNamedItem(XMLString::transcode("maxcount"));
+		buffer = XMLString::transcode(LimitSizeNode->getTextContent());
+		this->LimitSize = convert.toUnsignedInt64(buffer);
+		XMLString::release(&buffer);
+		buffer = XMLString::transcode(LimitCountNode->getTextContent());
+		this->LimitCount = convert.toUnsignedInteger(buffer);
+		XMLString::release(&buffer);
 	}
 	XMLPlatformUtils::Terminate();
 }

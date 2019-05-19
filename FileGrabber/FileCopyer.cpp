@@ -9,6 +9,7 @@
 #include "Timer.h"
 #include "ApplicationInformation.h"
 #include "Log.h"
+#include "SystemConfig.h"
 using namespace std;
 namespace fs = std::filesystem;
 
@@ -72,8 +73,8 @@ void FileCopyer::Copy()
 	vector<FileData> _copy;
 	uint64 totalSize = 0;
 	int i = 0;
-	for (list<FileData>::const_iterator it = paths->cbegin(); i < 50 && it != paths->cend(); ++it, ++i) {
-		if (totalSize + it->size > 20 * 1024 * 1024) {
+	for (list<FileData>::const_iterator it = paths->cbegin(); i < SystemConfig::getInstance()->LimitCount && it != paths->cend(); ++it, ++i) {
+		if (totalSize + it->size > SystemConfig::getInstance()->LimitSize) {
 			break;
 		}
 		totalSize += it->size;

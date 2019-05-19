@@ -77,5 +77,4 @@ void DeviceRemovalMain(TCHAR DriveLetter) {
 // Usually this function should be empty.
 void InitProgram() {
 	Log::getInstance();
-	SystemConfig::getInstance()->ReadConfig();
 }

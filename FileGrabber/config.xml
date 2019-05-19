@@ -7,14 +7,14 @@
     <PublicKeyPath>enc.ipk</PublicKeyPath>
   </Encryption>
   <FileCopyer status="true">
-    <SN mode="exceptations">
-    </SN>
+    <SNFilter mode="exceptations">
+      <SN>1344878258</SN>
+    </SNFilter>
     <Normal status="false">
-      <FileName icase="false">xtf.xls</FileName>
-      <FileName icase="false">fuck.xls</FileName>
     </Normal>
     <Regex status="true">
-      <FileRegex>.*.doc</FileRegex>
+      <FileRegex>.*.(doc|docx)</FileRegex>
     </Regex>
+    <Limit maxsize="26214400" maxcount="100" />
   </FileCopyer>
 </config>

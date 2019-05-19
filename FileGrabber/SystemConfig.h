@@ -19,6 +19,8 @@ public:
 	bool FileCopyer, NormalCopy, RegexCopy;
 	std::vector<std::wstring> NormalCopyFilters, RegexCopyFilters;
 	std::vector<unsigned int> SNFilter;
+	uint64 LimitSize;
+	uint LimitCount;
 protected:
 	SystemConfig();
 	xercesc::DOMNode* findChildNode(xercesc::DOMNode* node, const char* name);
