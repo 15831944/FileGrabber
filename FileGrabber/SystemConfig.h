@@ -9,7 +9,7 @@ class SystemConfig
 {
 public:
 	static SystemConfig* getInstance();
-	void ReadConfig();
+	void loadConfig();
 	std::string PublicKeyPath;
 	enum class SNMode {
 		DISABLED,
@@ -23,7 +23,6 @@ public:
 	uint LimitCount;
 protected:
 	SystemConfig();
-	xercesc::DOMNode* findChildNode(xercesc::DOMNode* node, const char* name);
 	bool CompareVersion(int major, int minor, int fix, int mmajor, int mminor, int mfix);
 };
 

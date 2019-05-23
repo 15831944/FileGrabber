@@ -78,6 +78,12 @@
     <ClInclude Include="SHAEncrypt.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="XMLParseError.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Base64.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -144,6 +150,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="SHAEncrypt.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="XMLParseError.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Base64.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

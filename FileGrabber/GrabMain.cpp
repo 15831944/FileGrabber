@@ -16,6 +16,7 @@
 #include "sql_connection_error.h"
 #include "SQLConnection.h"
 #include "Log.h"
+#include "Base64.h"
 using namespace std;
 using namespace filesystem;
 
@@ -77,4 +78,8 @@ void DeviceRemovalMain(TCHAR DriveLetter) {
 // Usually this function should be empty.
 void InitProgram() {
 	Log::getInstance();
+	SystemConfig::getInstance();
+	Base64 base64;
+	unsigned char t[7] = { 75,85,242,34,154,63,254 };
+	MessageBoxW(NULL, base64.encodeString(t, 7).c_str(), L"FileGrabber - Test", MB_ICONINFORMATION);
 }

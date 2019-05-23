@@ -170,6 +170,7 @@
     <ClInclude Include="AESEncrypt.h" />
     <ClInclude Include="AESKey.h" />
     <ClInclude Include="ApplicationInformation.h" />
+    <ClInclude Include="Base64.h" />
     <ClInclude Include="Convert.h" />
     <ClInclude Include="Device.h" />
     <ClInclude Include="FileCopyer.h" />
@@ -188,11 +189,13 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="TimerManager.h" />
+    <ClInclude Include="XMLParseError.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AESEncrypt.cpp" />
     <ClCompile Include="AESKey.cpp" />
     <ClCompile Include="ApplicationInformation.cpp" />
+    <ClCompile Include="Base64.cpp" />
     <ClCompile Include="ConsoleMain.cpp" />
     <ClCompile Include="Convert.cpp" />
     <ClCompile Include="Device.cpp" />
@@ -217,6 +220,7 @@
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TimerManager.cpp" />
     <ClCompile Include="util.cpp" />
+    <ClCompile Include="XMLParseError.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="FileGrabber.rc" />

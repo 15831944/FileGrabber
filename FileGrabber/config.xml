@@ -1,20 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
   <ConfigInformation>
-    <MinimumVersion>0.3.0</MinimumVersion>
+    <MinimumVersion>0.3.1</MinimumVersion>
   </ConfigInformation>
   <Encryption>
-    <PublicKeyPath>enc.ipk</PublicKeyPath>
+    <PublicKey>enc.ipk</PublicKey>
   </Encryption>
-  <FileCopyer status="true">
-    <SNFilter mode="exceptations">
-      <SN>1344878258</SN>
-    </SNFilter>
-    <Normal status="false">
-    </Normal>
-    <Regex status="true">
-      <FileRegex>.*.(doc|docx)</FileRegex>
-    </Regex>
-    <Limit maxsize="26214400" maxcount="100" />
-  </FileCopyer>
+  <Service enabled="true">
+    <DefaultConfig mode="listen">
+      <Limit enabled="true">
+        <MaxSize enabled="true">20971520</MaxSize>
+        <MaxCount enabled="true">70</MaxCount>
+      </Limit>
+    </DefaultConfig>
+    <Device name="Master#1" SerialNumber="" mode="listen">
+      <Limit enabled="true">
+        <MaxSize enabled="true">20971520</MaxSize>
+        <MaxCount enabled="true">70</MaxCount>
+      </Limit>
+      <FileLister enabled="true" />
+      <FileCopyer enabled="true">
+        <NormalCopy enabled="false" />
+        <RegexCopy enabled="true">
+          <Regex>.*.(doc|docx|ppt|pptx)</Regex>
+        </RegexCopy>
+      </FileCopyer>
+    </Device>
+    <Device name="STY" SerialNumber="" mode="disabled" />
+  </Service>
 </config>
