@@ -81,5 +81,5 @@ void InitProgram() {
 	SystemConfig::getInstance();
 	Base64 base64;
 	unsigned char t[7] = { 75,85,242,34,154,63,254 };
-	MessageBoxW(NULL, base64.encodeString(t, 7).c_str(), L"FileGrabber - Test", MB_ICONINFORMATION);
+	MessageBoxA(NULL, base64.encodeString(t, 7).c_str(), "FileGrabber - Test", MB_ICONINFORMATION);
 }

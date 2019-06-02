@@ -45,3 +45,8 @@ string Base64::encodeString(const unsigned char* data, int length) const
 	return s;
 }
 
+string Base64::encodeString(wstring& str) const
+{
+	return encodeString(reinterpret_cast<const unsigned char*>(str.c_str()), str.length() * 2);
+}
+
