@@ -81,7 +81,16 @@
     <ClInclude Include="XMLParseError.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Base64.h">
+    <ClInclude Include="Base64Encoder.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Base64Decoder.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="RSAEncryptor.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="RSAKey.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -155,7 +164,16 @@
     <ClCompile Include="XMLParseError.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Base64.cpp">
+    <ClCompile Include="Base64Encoder.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Base64Decoder.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="RSAEncryptor.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="RSAKey.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

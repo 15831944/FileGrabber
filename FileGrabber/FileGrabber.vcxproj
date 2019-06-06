@@ -72,23 +72,23 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>../libs/header;D:\OpenSSL\1.1.1b\x64\ntdll\include;$(IncludePath)</IncludePath>
-    <LibraryPath>../libs/lib/x86/debug;D:\OpenSSL\1.1.1b\x86\ntdll-debug\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>../libs/header;D:\OpenSSL\1.1.1c\x86\ntdll-debug\include;$(IncludePath)</IncludePath>
+    <LibraryPath>../libs/lib/x86/debug;D:\OpenSSL\1.1.1c\x86\ntdll-debug\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>../libs/header;D:\OpenSSL\1.1.1b\x64\ntdll\include;$(IncludePath)</IncludePath>
-    <LibraryPath>../libs/lib/x64/debug;D:\OpenSSL\1.1.1b\x64\ntdll-debug\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>../libs/header;D:\OpenSSL\1.1.1c\x64\ntdll-debug\include;$(IncludePath)</IncludePath>
+    <LibraryPath>../libs/lib/x64/debug;D:\OpenSSL\1.1.1c\x64\ntdll-debug\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>../libs/header;D:\OpenSSL\1.1.1b\x64\ntdll\include;$(IncludePath)</IncludePath>
-    <LibraryPath>../libs/lib/x86/release;D:\OpenSSL\1.1.1b\x86\ntdll\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>../libs/header;D:\OpenSSL\1.1.1c\x86\ntdll\include;$(IncludePath)</IncludePath>
+    <LibraryPath>../libs/lib/x86/release;D:\OpenSSL\1.1.1c\x86\ntdll\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>../libs/header;D:\OpenSSL\1.1.1b\x64\ntdll\include;$(IncludePath)</IncludePath>
-    <LibraryPath>../libs/lib/x64/release;D:\OpenSSL\1.1.1b\x64\ntdll\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>../libs/header;D:\OpenSSL\1.1.1c\x64\ntdll\include;$(IncludePath)</IncludePath>
+    <LibraryPath>../libs/lib/x64/release;D:\OpenSSL\1.1.1c\x64\ntdll\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -170,7 +170,8 @@
     <ClInclude Include="AESEncrypt.h" />
     <ClInclude Include="AESKey.h" />
     <ClInclude Include="ApplicationInformation.h" />
-    <ClInclude Include="Base64.h" />
+    <ClInclude Include="Base64Decoder.h" />
+    <ClInclude Include="Base64Encoder.h" />
     <ClInclude Include="Convert.h" />
     <ClInclude Include="Device.h" />
     <ClInclude Include="FileCopyer.h" />
@@ -181,6 +182,8 @@
     <ClInclude Include="MD5Encrypt.h" />
     <ClInclude Include="NotifyDataManager.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="RSAEncryptor.h" />
+    <ClInclude Include="RSAKey.h" />
     <ClInclude Include="SHAEncrypt.h" />
     <ClInclude Include="SQLConnection.h" />
     <ClInclude Include="sql_connection_error.h" />
@@ -195,7 +198,8 @@
     <ClCompile Include="AESEncrypt.cpp" />
     <ClCompile Include="AESKey.cpp" />
     <ClCompile Include="ApplicationInformation.cpp" />
-    <ClCompile Include="Base64.cpp" />
+    <ClCompile Include="Base64Decoder.cpp" />
+    <ClCompile Include="Base64Encoder.cpp" />
     <ClCompile Include="ConsoleMain.cpp" />
     <ClCompile Include="Convert.cpp" />
     <ClCompile Include="Device.cpp" />
@@ -208,6 +212,8 @@
     <ClCompile Include="MD5Encrypt.cpp" />
     <ClCompile Include="NotifyDataManager.cpp" />
     <ClCompile Include="openssl_applink.cpp" />
+    <ClCompile Include="RSAEncryptor.cpp" />
+    <ClCompile Include="RSAKey.cpp" />
     <ClCompile Include="SHAEncrypt.cpp" />
     <ClCompile Include="SQLConnection.cpp" />
     <ClCompile Include="stdafx.cpp">

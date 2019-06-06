@@ -16,7 +16,9 @@
 #include "sql_connection_error.h"
 #include "SQLConnection.h"
 #include "Log.h"
-#include "Base64.h"
+#include "Base64Encoder.h"
+#include "Base64Decoder.h"
+#include "RSAKey.h"
 using namespace std;
 using namespace filesystem;
 
@@ -79,7 +81,8 @@ void DeviceRemovalMain(TCHAR DriveLetter) {
 void InitProgram() {
 	Log::getInstance();
 	SystemConfig::getInstance();
-	Base64 base64;
-	unsigned char t[7] = { 75,85,242,34,154,63,254 };
-	MessageBoxA(NULL, base64.encodeString(t, 7).c_str(), "FileGrabber - Test", MB_ICONINFORMATION);
+	RSAKey key;
+	key.generate();
+	key.writePrivateKey("key.key");
+	key.writePublicKey("pub.pub");
 }
