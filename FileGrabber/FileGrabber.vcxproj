@@ -167,8 +167,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="AESEncrypt.h" />
-    <ClInclude Include="AESKey.h" />
     <ClInclude Include="ApplicationInformation.h" />
     <ClInclude Include="Base64Decoder.h" />
     <ClInclude Include="Base64Encoder.h" />
@@ -179,11 +177,8 @@
     <ClInclude Include="FileLister.h" />
     <ClInclude Include="FileSearcher.h" />
     <ClInclude Include="Log.h" />
-    <ClInclude Include="MD5Encrypt.h" />
     <ClInclude Include="NotifyDataManager.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="RSAEncryptor.h" />
-    <ClInclude Include="RSAKey.h" />
     <ClInclude Include="SHAEncrypt.h" />
     <ClInclude Include="SQLConnection.h" />
     <ClInclude Include="sql_connection_error.h" />
@@ -195,8 +190,6 @@
     <ClInclude Include="XMLParseError.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AESEncrypt.cpp" />
-    <ClCompile Include="AESKey.cpp" />
     <ClCompile Include="ApplicationInformation.cpp" />
     <ClCompile Include="Base64Decoder.cpp" />
     <ClCompile Include="Base64Encoder.cpp" />
@@ -209,12 +202,8 @@
     <ClCompile Include="FileSearcher.cpp" />
     <ClCompile Include="GrabMain.cpp" />
     <ClCompile Include="Log.cpp" />
-    <ClCompile Include="MD5Encrypt.cpp" />
     <ClCompile Include="NotifyDataManager.cpp" />
     <ClCompile Include="openssl_applink.cpp" />
-    <ClCompile Include="RSAEncryptor.cpp" />
-    <ClCompile Include="RSAKey.cpp" />
-    <ClCompile Include="SHAEncrypt.cpp" />
     <ClCompile Include="SQLConnection.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

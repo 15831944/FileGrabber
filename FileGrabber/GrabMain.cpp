@@ -81,8 +81,4 @@ void DeviceRemovalMain(TCHAR DriveLetter) {
 void InitProgram() {
 	Log::getInstance();
 	SystemConfig::getInstance();
-	RSAKey key;
-	key.generate();
-	key.writePrivateKey("key.key");
-	key.writePublicKey("pub.pub");
 }

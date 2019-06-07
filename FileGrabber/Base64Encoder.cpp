@@ -11,7 +11,7 @@ Base64Encoder::Base64Encoder()
 
 Base64Encoder::Base64Encoder(const unsigned char* data, int length)
 {
-	this->_data = new unsigned char[(length + 1) * 3 + 1];
+	this->_data = new unsigned char[(static_cast<size_t>(length) + 1) * 3 + 1];
 	EVP_EncodeBlock(this->_data, data, length);
 }
 
