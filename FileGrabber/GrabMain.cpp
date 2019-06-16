@@ -6,8 +6,6 @@
 #include <sstream>
 #include <string>
 #include "FileLister.h"
-#include "AESKey.h"
-#include "AESEncrypt.h"
 #include <filesystem>
 #include "Convert.h"
 #include "FileSearcher.h"
@@ -18,12 +16,10 @@
 #include "Log.h"
 #include "Base64Encoder.h"
 #include "Base64Decoder.h"
-#include "RSAKey.h"
 using namespace std;
 using namespace filesystem;
 
 void DeviceArrivalMain(TCHAR DriveLetter) {
-	LOG->i(wstring(L"File grabbing module started. Ready to grab files. Drive Letter: ") + DriveLetter);
 	SystemConfig* config = SystemConfig::getInstance();
 	Device dv(DriveLetter);
 	Device::DiskInformation info = dv.GetDiskInformation();
@@ -70,15 +66,14 @@ void DeviceArrivalMain(TCHAR DriveLetter) {
 		FileCopyer cp(dv, psls);
 		cp.ListFile(pls);
 	}
-	LOG->i(wstring(L"Grab done. Device Drive Letter: ") + DriveLetter);
+	
 }
 
 void DeviceRemovalMain(TCHAR DriveLetter) {
-	LOG->i(wstring(L"Device removed. Drive Letter: ") + DriveLetter);
+	
 }
 
 // Usually this function should be empty.
 void InitProgram() {
-	Log::getInstance();
 	SystemConfig::getInstance();
 }

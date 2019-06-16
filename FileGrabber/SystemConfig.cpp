@@ -13,7 +13,7 @@ using namespace std;
 using namespace xercesc;
 
 static SystemConfig* psc = nullptr;
-
+DOMNode* findFirstChildNode(DOMNode *n, char *nodename);
 
 SystemConfig* SystemConfig::getInstance()
 {
@@ -43,7 +43,6 @@ void SystemConfig::loadConfig()
 	RegexCopyFilters.clear();
 
 	Convert convert;
-	char* buffer = nullptr;
 
 	XMLPlatformUtils::Initialize();
 	XercesDOMParser* parser = new XercesDOMParser();
@@ -59,24 +58,38 @@ void SystemConfig::loadConfig()
 	char* buffer = nullptr;
 
 	// 1. Check the minimum version, etc.
-	DOMNodeList* ConfigInformationNodes = root->getElementsByTagName(XMLString::transcode("ConfigInformation"));
-	if (ConfigInformationNodes->getLength() != 1) {
+	DOMNode* ConfigInformationNode = findFirstChildNode(root, "ConfigInformation");
+	if (ConfigInformationNode == nullptr) {
 		throw XMLParseError("Invalid XML Configuration File.");
 	}
-	DOMNode* ConfigInformationNode = ConfigInformationNodes->item(0);
-	buffer = XMLString::transcode(ConfigInformationNode->getNodeName());
-	if (strcmp(buffer, "MinimumVersion") != 0) {
-		XMLString::release(&buffer);
+	DOMNode* MinimumVersionNode = findFirstChildNode(ConfigInformationNode, "MinimumVersion");
+	if (MinimumVersionNode == nullptr) {
 		throw XMLParseError("Invalid XML Configuration File.");
 	}
-	XMLString::release(&buffer);
-	
+	buffer = XMLString::transcode(MinimumVersionNode->getNodeValue());
+	int major, minor, fix;
+	if (sscanf_s(buffer, "%d.%d.%d", &major, &minor, &fix) != 3) {
+		throw XMLParseError("Invalid XML Configuration File.");
+	}
+
 	XMLPlatformUtils::Terminate();
 }
 
 SystemConfig::SystemConfig()
 {
 	loadConfig();
+}
+
+static DOMNode* findFirstChildNode(DOMNode *n, const char *nodename)
+{
+	for (DOMNode *child = n->getFirstChild(); child != nullptr; child = child->getNextSibling())
+	{
+		if (child->getNodeType() == DOMNode::ELEMENT_NODE && XMLString::compareString(child->getNodeName(), XMLString::transcode(nodename)) == 0)
+		{
+			return child;
+		}
+	}
+	return nullptr;
 }
 
 bool SystemConfig::CompareVersion(int major, int minor, int fix, int mmajor, int mminor, int mfix)

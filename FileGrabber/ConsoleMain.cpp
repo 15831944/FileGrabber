@@ -2,7 +2,6 @@
 #include "ApplicationInformation.h"
 #include <cstdio>
 #include <iostream>
-#include "MD5Encrypt.h"
 #include <string>
 using namespace std;
 
@@ -33,6 +32,7 @@ int ProcessConsoleMain(int argc, wchar_t* argv[]) {
 }
 
 void PasswordVerify() {
+	/*
 	wstring password;
 	MD5Encrypt enc;
 	while (true) {
@@ -43,4 +43,5 @@ void PasswordVerify() {
 		}
 		wcout << L"Error #1: Incorrect password. You must input the correct password to continue." << endl << endl;
 	}
+	*/
 }

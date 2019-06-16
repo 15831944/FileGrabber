@@ -2,7 +2,6 @@
 #include "Device.h"
 #include <memory>
 #include <list>
-#include "AESKey.h"
 
 class FileCopyer
 {
@@ -17,6 +16,6 @@ public:
 protected:
 	Device device;
 	std::shared_ptr<std::list<FileData>> paths;
-	AESKey key;
+	//AESKey key;
 };
 

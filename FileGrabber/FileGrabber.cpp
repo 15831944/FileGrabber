@@ -6,8 +6,6 @@
 #include <Dbt.h>
 #include "Convert.h"
 #include "NotifyDataManager.h"
-#include "AESKey.h"
-#include "AESEncrypt.h"
 #include "ApplicationInformation.h"
 #include "Log.h"
 using namespace std;

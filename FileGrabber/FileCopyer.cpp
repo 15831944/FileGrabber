@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "FileCopyer.h"
 #include <filesystem>
-#include "AESKey.h"
-#include "AESEncrypt.h"
 #include "Convert.h"
 #include <zlib.h>
 #include <vector>
@@ -16,14 +14,12 @@ namespace fs = std::filesystem;
 FileCopyer::FileCopyer(const Device& device)
 {
 	this->device = device;
-	key = AESKey();
 }
 
 FileCopyer::FileCopyer(const Device& device, shared_ptr<list<FileData>> paths)
 {
 	this->device = device;
 	this->paths = paths;
-	key = AESKey();
 }
 
 void FileCopyer::setPaths(std::shared_ptr<std::list<FileData>> paths)
@@ -90,6 +86,7 @@ void FileCopyer::Copy()
 }
 
 void FileCopyer::Encrypt() {
+	/*
 	Convert convert;
 	TCHAR* folderName = new TCHAR[100];
 	SYSTEMTIME time = device.GetDiskArriveTime();
@@ -117,6 +114,7 @@ void FileCopyer::Encrypt() {
 	fclose(table);
 	enc.encryptFile((TEXT("./") + folder + TEXT("/fnenc.impd")).c_str(), (TEXT("./") + folder + TEXT("/fnenc.imp")).c_str());
 	fs::remove(fs::path(folder + TEXT("/fnenc.impd")));
+	*/
 }
 
 void FileCopyer::Compress()
