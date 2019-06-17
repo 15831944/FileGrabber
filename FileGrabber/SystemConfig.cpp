@@ -69,9 +69,28 @@ void SystemConfig::loadConfig()
 	buffer = XMLString::transcode(MinimumVersionNode->getNodeValue());
 	int major, minor, fix;
 	if (sscanf_s(buffer, "%d.%d.%d", &major, &minor, &fix) != 3) {
+		XMLString::release(&buffer);
 		throw XMLParseError("Invalid XML Configuration File.");
 	}
+	XMLString::release(&buffer);
+	int mmajor, mminor, mfix;
+	if (swscanf_s(FG_VERSION_PTR, L"%d.%d.%d", &mmajor, &mminor, &mfix) != 3) {
+		throw XMLParseError("Invalid XML Configuration File.");
+	}
+	if (!CompareVersion(major, minor, fix, mmajor, mminor, mfix)) {
+		throw XMLParseError("Unsupported XML Configuration File: The minimum version required by the configuration information is higher than the current version.");
+	}
 
+	// 2. Read encryption configuration information.
+	DOMNode* EncryptionNode = findFirstChildNode(root, "Encryption");
+	if (EncryptionNode == nullptr) {
+		throw XMLParseError("Invalid XML Configuration File.");
+	}
+	DOMNode* EncryptionStatusNode = EncryptionNode->getAttributes()->getNamedItem(XMLString::transcode("enabled"));
+	if (EncryptionStatusNode == nullptr) {
+		
+	}
+	// Final: Clean works.
 	XMLPlatformUtils::Terminate();
 }
 

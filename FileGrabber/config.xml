@@ -3,7 +3,7 @@
   <ConfigInformation>
     <MinimumVersion>0.3.1</MinimumVersion>
   </ConfigInformation>
-  <Encryption>
+  <Encryption enabled="true">
     <PublicKey>enc.ipk</PublicKey>
   </Encryption>
   <Service enabled="true">

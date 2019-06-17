@@ -22,6 +22,21 @@ public:
 	uint64 LimitSize;
 	uint LimitCount;
 protected:
+	struct ConfigData {
+		struct {
+
+		} ConfigFileInformation;
+
+		struct {
+			int Major;
+			int Minor;
+			int Fix;
+		} MinimumVersion;
+
+		struct {
+
+		} Encryption;
+	};
 	SystemConfig();
 	bool CompareVersion(int major, int minor, int fix, int mmajor, int mminor, int mfix);
 };
