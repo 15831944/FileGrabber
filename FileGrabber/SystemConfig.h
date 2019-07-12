@@ -9,24 +9,11 @@ class SystemConfig
 {
 public:
 	static SystemConfig* getInstance();
-	void loadConfig();
-	std::string PublicKeyPath;
-	enum class SNMode {
-		DISABLED,
-		EXCEPTATIONS,
-		LISTENLIST
-	}ListenSN;
-	bool FileCopyer, NormalCopy, RegexCopy;
-	std::vector<std::wstring> NormalCopyFilters, RegexCopyFilters;
-	std::vector<unsigned int> SNFilter;
-	uint64 LimitSize;
-	uint LimitCount;
-protected:
+	enum class ListenMode {
+		LISTEN,
+		DISABLED
+	};
 	struct ConfigData {
-		struct {
-
-		} ConfigFileInformation;
-
 		struct {
 			int Major;
 			int Minor;
@@ -34,10 +21,38 @@ protected:
 		} MinimumVersion;
 
 		struct {
-
+			bool Enabled;
+			std::string Path;
 		} Encryption;
+
+		struct DeviceConfig {
+			std::string Name;
+			unsigned int SerialNumber;
+			ListenMode ListenMode;
+			struct {
+				bool LimitEnbaled;
+				bool MaxSizeLimited;
+				uint64 MaxSize;
+				bool MaxCountLimited;
+				uint64 MaxCount;
+			} Limit;
+			bool FileListerEnabled;
+			struct {
+				bool NormalCopyEnabled;
+				std::vector<std::string> NormalFilters;
+				bool RegexCopyEnabled;
+				std::vector<std::string> RegexCopyFilters;
+			} FileCopyer;
+		};
+
+		struct {
+			bool Enabled;
+			DeviceConfig DefaultConfig;
+			std::vector<DeviceConfig> DeviceConfig;
+		} Service;
 	};
+	ConfigData readConfig();
+protected:
 	SystemConfig();
 	bool CompareVersion(int major, int minor, int fix, int mmajor, int mminor, int mfix);
 };
-

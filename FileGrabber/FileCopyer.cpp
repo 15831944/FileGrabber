@@ -59,6 +59,7 @@ void FileCopyer::ListFile(shared_ptr<list<FileData>> plist)
 
 void FileCopyer::Copy()
 {
+	/*
 	TCHAR* folderName = new TCHAR[100];
 	SYSTEMTIME time = device.GetDiskArriveTime();
 	swprintf_s(folderName, 100, TEXT("%u-%u-%u %02u.%02u.%02u - %u"), time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute,
@@ -83,6 +84,7 @@ void FileCopyer::Copy()
 		fs::copy(fs::path(path), fs::path(fn + TEXT("/") + data.name));
 	}
 	LOG->i(wstring(L"File copying sucessful. ") + to_wstring(i) + (i == 1 ? L" file of " : L" files of ") + to_wstring(totalSize) + L" bytes copied.");
+	*/
 }
 
 void FileCopyer::Encrypt() {

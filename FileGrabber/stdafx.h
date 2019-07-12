@@ -22,9 +22,9 @@
 #include <string>
 namespace std {
 #ifdef UNICODE
-	typedef wstring _tstring;
+typedef wstring _tstring;
 #else
-	typedef string _tstring;
+typedef string _tstring;
 #endif
 }
 
