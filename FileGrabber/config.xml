@@ -13,7 +13,7 @@
         <MaxCount enabled="true">70</MaxCount>
       </Limit>
     </DefaultConfig>
-    <Device enabled="true" name="Master#1" SerialNumber="" mode="listen">
+    <Device enabled="true" name="Master#1" SerialNumber="19283473" mode="listen">
       <Limit enabled="true">
         <MaxSize enabled="false">20971520</MaxSize>
         <MaxCount enabled="true">70</MaxCount>
@@ -28,6 +28,6 @@
         </RegexCopy>
       </FileCopyer>
     </Device>
-    <Device name="STY" SerialNumber="" mode="disabled" />
+    <Device enabled="false" name="STY" SerialNumber="" mode="disabled" />
   </Service>
 </config>

@@ -361,6 +361,7 @@ SystemConfig::ConfigData SystemConfig::readConfig()
 		set<uint> SerialNumbers;
 		set<string> DeviceNames;
 		for (size_t cur = 0; cur < DeviceConfigList->getLength(); ++cur) {
+			ConfigData::DeviceConfig cfg;
 			DOMElement* DeviceConfig = static_cast<DOMElement*>(DeviceConfigList->item(cur));
 			buffer = XMLString::transcode(DeviceConfig->getAttribute(u"enabled"));
 			if (strcmp(buffer, "") == 0 || strcmp(buffer, "true") == 0) {
@@ -372,7 +373,124 @@ SystemConfig::ConfigData SystemConfig::readConfig()
 			XMLString::release(&buffer);
 
 			if (flag) {
+				// 3.2.1 Basic Information.
+				buffer = XMLString::transcode(DeviceConfig->getAttribute(u"SerialNumber"));
+				CHECK_INV_IF(strcmp(buffer, "") != 0);
+				uint SerialNumber = convert.toUnsignedInteger(buffer);
+				XMLString::release(&buffer);
+				CHECK_INV_IF(SerialNumbers.find(SerialNumber) == SerialNumbers.end());
+				SerialNumbers.insert(SerialNumber);
+				cfg.SerialNumber = SerialNumber;
+				buffer = XMLString::transcode(DeviceConfig->getAttribute(u"name"));
+				cfg.Name = buffer;
+				XMLString::release(&buffer);
+				if (!cfg.Name.empty()) {
+					CHECK_INV_IF(DeviceNames.find(cfg.Name) == DeviceNames.end());
+					DeviceNames.insert(cfg.Name);
+				}
+				buffer = XMLString::transcode(DeviceConfig->getAttribute(u"mode"));
+				if (strcmp(buffer, "") == 0 || strcmp(buffer, "listen") == 0) {
+					cfg.ListenMode = ListenMode::LISTEN;
+				}
+				else {
+					cfg.ListenMode = ListenMode::DISABLED;
+				}
+				XMLString::release(&buffer);
 
+				// 3.2.2 Read Limit Information.
+				DOMNodeList* LimitList = DeviceConfig->getElementsByTagName(u"Limit");
+				CHECK_INV_IF(LimitList->getLength() <= 1);
+				if (LimitList->getLength() == 0) {
+					cfg.Limit.LimitEnbaled = data.Service.DefaultConfig.Limit.LimitEnbaled;
+					cfg.Limit.MaxCountLimited = data.Service.DefaultConfig.Limit.MaxCountLimited;
+					cfg.Limit.MaxCount = data.Service.DefaultConfig.Limit.MaxCount;
+					cfg.Limit.MaxSizeLimited = data.Service.DefaultConfig.Limit.MaxSizeLimited;
+					cfg.Limit.MaxSize = data.Service.DefaultConfig.Limit.MaxSize;
+				}
+				else {
+					DOMElement* Limit = static_cast<DOMElement*>(LimitList->item(0));
+					buffer = XMLString::transcode(Limit->getAttribute(u"enabled"));
+					int iflag = 0;
+					if (strcmp(buffer, "") == 0 || strcmp(buffer, "true") == 0) {
+						iflag = 2;
+					}
+					else if (strcmp(buffer, "false") == 0) {
+						iflag = 1;
+					}
+					else {
+						iflag = 0;
+					}
+					XMLString::release(&buffer);
+					if (iflag==2) {
+						cfg.Limit.LimitEnbaled = true;
+						DOMNodeList* MaxSizeList = Limit->getElementsByTagName(u"MaxSize");
+						CHECK_INV_IF(MaxSizeList->getLength() <= 1);
+						if (MaxSizeList->getLength() == 0) {
+							cfg.Limit.MaxSizeLimited = false;
+							cfg.Limit.MaxSize = UINT64_MAX;
+						}
+						else {
+							DOMElement* MaxSize = static_cast<DOMElement*>(MaxSizeList->item(0));
+							buffer = XMLString::transcode(MaxSize->getAttribute(u"enabled"));
+							if (strcmp(buffer, "") == 0 || strcmp(buffer, "true") == 0) {
+								flag = true;
+							}
+							else {
+								flag = false;
+							}
+							XMLString::release(&buffer);
+
+							if (flag) {
+								buffer = XMLString::transcode(MaxSize->getTextContent());
+								cfg.Limit.MaxSizeLimited = true;
+								cfg.Limit.MaxSize = convert.toUnsignedInt64(buffer);
+								XMLString::release(&buffer);
+							}
+							else {
+								cfg.Limit.MaxSizeLimited = false;
+								cfg.Limit.MaxSize = UINT64_MAX;
+							}
+						}
+
+						DOMNodeList* MaxCountList = Limit->getElementsByTagName(u"MaxCount");
+						CHECK_INV_IF(MaxCountList->getLength() <= 1);
+						if (MaxCountList->getLength() == 0) {
+							cfg.Limit.MaxCountLimited = false;
+							cfg.Limit.MaxCount = UINT64_MAX;
+						}
+						else {
+							DOMElement* MaxCount = static_cast<DOMElement*>(MaxCountList->item(0));
+							buffer = XMLString::transcode(MaxCount->getAttribute(u"enabled"));
+							if (strcmp(buffer, "") == 0 || strcmp(buffer, "true") == 0) {
+								flag = true;
+							}
+							else {
+								flag = false;
+							}
+							XMLString::release(&buffer);
+
+							if (flag) {
+								buffer = XMLString::transcode(MaxCount->getTextContent());
+								cfg.Limit.MaxCountLimited = true;
+								cfg.Limit.MaxCount = convert.toUnsignedInt64(buffer);
+								XMLString::release(&buffer);
+							}
+							else {
+								cfg.Limit.MaxCountLimited = false;
+								cfg.Limit.MaxCount = UINT64_MAX;
+							}
+						}
+					}
+					else {
+						cfg.Limit.LimitEnbaled = false;
+						cfg.Limit.MaxCountLimited = false;
+						cfg.Limit.MaxCount = UINT64_MAX;
+						cfg.Limit.MaxSizeLimited = false;
+						cfg.Limit.MaxSize = UINT64_MAX;
+					}
+				}
+
+				data.Service.DeviceConfig.push_back(cfg);
 			}
 		}
 	}
