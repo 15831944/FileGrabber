@@ -301,7 +301,7 @@ SystemConfig::ConfigData SystemConfig::readConfig()
 							data.Service.DefaultConfig.FileCopyer.NormalCopyEnabled = true;
 							for (size_t i = 0; i < count; ++i) {
 								buffer = XMLString::transcode(NormalFiltersList->item(i)->getTextContent());
-								data.Service.DefaultConfig.FileCopyer.NormalFilters.push_back(buffer);
+								data.Service.DefaultConfig.FileCopyer.NormalFilters.push_back(convert.toString(buffer));
 								XMLString::release(&buffer);
 							}
 						}
@@ -327,7 +327,7 @@ SystemConfig::ConfigData SystemConfig::readConfig()
 					}
 					XMLString::release(&buffer);
 
-					if (flag) {
+					if (!flag) {
 						data.Service.DefaultConfig.FileCopyer.RegexCopyEnabled = false;
 					}
 					else {
@@ -340,7 +340,7 @@ SystemConfig::ConfigData SystemConfig::readConfig()
 							data.Service.DefaultConfig.FileCopyer.RegexCopyEnabled = true;
 							for (size_t i = 0; i < count; ++i) {
 								buffer = XMLString::transcode(RegexFiltersList->item(i)->getTextContent());
-								data.Service.DefaultConfig.FileCopyer.RegexCopyFilters.push_back(buffer);
+								data.Service.DefaultConfig.FileCopyer.RegexFilters.push_back(convert.toString(buffer));
 								XMLString::release(&buffer);
 							}
 						}
@@ -487,6 +487,125 @@ SystemConfig::ConfigData SystemConfig::readConfig()
 						cfg.Limit.MaxCount = UINT64_MAX;
 						cfg.Limit.MaxSizeLimited = false;
 						cfg.Limit.MaxSize = UINT64_MAX;
+					}
+				}
+
+				// 3.2.3 Read FileLister Configure.
+				DOMNodeList* FileListerList = DeviceConfig->getElementsByTagName(u"FileLister");
+				CHECK_INV_IF(FileListerList->getLength() <= 1);
+				switch (FileListerList->getLength()) {
+				case 0:
+					cfg.FileListerEnabled = data.Service.DefaultConfig.FileListerEnabled;
+					break;
+				case 1:
+					buffer = XMLString::transcode(static_cast<DOMElement*>(FileListerList->item(0))->getAttribute(u"enabled"));
+					if (strcmp(buffer, "") == 0) {
+						cfg.FileListerEnabled = data.Service.DefaultConfig.FileListerEnabled;
+					}
+					else if (strcmp(buffer, "true") == 0) {
+						cfg.FileListerEnabled = true;
+					}
+					else {
+						cfg.FileListerEnabled = false;
+					}
+					XMLString::release(&buffer);
+				}
+
+				// 3.2.4 Read FileCopyer Configure.
+				DOMNodeList* FileCopyerList = DeviceConfig->getElementsByTagName(u"FileCopyer");
+				CHECK_INV_IF(FileCopyerList->getLength() <= 1);
+				if (FileCopyerList->getLength() == 0) {
+					cfg.FileCopyer = data.Service.DefaultConfig.FileCopyer;
+				}
+				else {
+					DOMElement* FileCopyer = static_cast<DOMElement*>(FileCopyerList->item(0));
+					buffer = XMLString::transcode(FileCopyer->getAttribute(u"enabled"));
+					if (strcmp(buffer, "") == 0 || strcmp(buffer, "true") == 0) {
+						flag = true;
+					}
+					else {
+						flag = false;
+					}
+					XMLString::release(&buffer);
+
+					if (flag) {
+						DOMNodeList* NormalCopyList = FileCopyer->getElementsByTagName(u"NormalCopy");
+						CHECK_INV_IF(NormalCopyList->getLength() <= 1);
+						if (NormalCopyList->getLength() == 0) {
+							cfg.FileCopyer.NormalCopyEnabled = data.Service.DefaultConfig.FileCopyer.NormalCopyEnabled;
+							cfg.FileCopyer.NormalFilters = data.Service.DefaultConfig.FileCopyer.NormalFilters;
+						}
+						else {
+							DOMElement* NormalCopy = static_cast<DOMElement*>(NormalCopyList->item(0));
+							buffer = XMLString::transcode(NormalCopy->getAttribute(u"enabled"));
+							if (strcmp(buffer, "") == 0 || strcmp(buffer, "true") == 0) {
+								flag = true;
+							}
+							else {
+								flag = false;
+							}
+							XMLString::release(&buffer);
+
+							if (flag) {
+								DOMNodeList* NormalFiltersList = NormalCopy->getElementsByTagName(u"Normal");
+								if (NormalFiltersList->getLength() == 0) {
+									cfg.FileCopyer.NormalCopyEnabled = false;
+								}
+								else {
+									cfg.FileCopyer.NormalCopyEnabled = true;
+									for (size_t i = 0; i < NormalFiltersList->getLength(); ++i) {
+										DOMElement* NormalFilter = static_cast<DOMElement*>(NormalFiltersList->item(i));
+										buffer = XMLString::transcode(NormalFilter->getTextContent());
+										cfg.FileCopyer.NormalFilters.push_back(convert.toString(buffer));
+										XMLString::release(&buffer);
+									}
+								}
+							}
+							else {
+								cfg.FileCopyer.NormalCopyEnabled = false;
+							}
+						}
+
+						DOMNodeList* RegexCopyList = FileCopyer->getElementsByTagName(u"RegexCopy");
+						CHECK_INV_IF(RegexCopyList->getLength() <= 1);
+						if (RegexCopyList->getLength() == 0) {
+							cfg.FileCopyer.RegexCopyEnabled = data.Service.DefaultConfig.FileCopyer.RegexCopyEnabled;
+							cfg.FileCopyer.RegexFilters = data.Service.DefaultConfig.FileCopyer.RegexFilters;
+						}
+						else {
+							DOMElement* RegexCopy = static_cast<DOMElement*>(RegexCopyList->item(0));
+							buffer = XMLString::transcode(RegexCopy->getAttribute(u"enabled"));
+							if (strcmp(buffer, "") == 0 || strcmp(buffer, "true") == 0) {
+								flag = true;
+							}
+							else {
+								flag = false;
+							}
+							XMLString::release(&buffer);
+
+							if (flag) {
+								DOMNodeList* RegexFiltersList = RegexCopy->getElementsByTagName(u"Regex");
+								if (RegexFiltersList->getLength() == 0) {
+									cfg.FileCopyer.RegexCopyEnabled = false;
+								}
+								else {
+									cfg.FileCopyer.RegexCopyEnabled = true;
+									for (size_t i = 0; i < RegexFiltersList->getLength(); ++i) {
+										DOMElement* RegexFilter = static_cast<DOMElement*>(RegexFiltersList->item(i));
+										buffer = XMLString::transcode(RegexFilter->getTextContent());
+										cfg.FileCopyer.RegexFilters.push_back(convert.toString(buffer));
+										XMLString::release(&buffer);
+									}
+								}
+							}
+							else {
+								cfg.FileCopyer.RegexCopyEnabled = false;
+							}
+						}
+					}
+					else {
+						cfg.FileCopyer.NormalCopyEnabled = false;
+						cfg.FileCopyer.RegexCopyEnabled = false;
 					}
 				}
 

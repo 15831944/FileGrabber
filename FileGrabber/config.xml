@@ -12,6 +12,14 @@
         <MaxSize enabled="false">20971520</MaxSize>
         <MaxCount enabled="true">70</MaxCount>
       </Limit>
+      <FileCopyer enabled="true">
+        <NormalCopy enabled="false">
+          <Normal></Normal>
+        </NormalCopy>
+        <RegexCopy enabled="true">
+          <Regex>.*.(doc|docx|ppt|pptx)</Regex>
+        </RegexCopy>
+      </FileCopyer>
     </DefaultConfig>
     <Device enabled="true" name="Master#1" SerialNumber="19283473" mode="listen">
       <Limit enabled="true">
@@ -28,6 +36,6 @@
         </RegexCopy>
       </FileCopyer>
     </Device>
-    <Device enabled="false" name="STY" SerialNumber="" mode="disabled" />
+    <Device enabled="true" name="STY" SerialNumber="10293" mode="disabled" />
   </Service>
 </config>

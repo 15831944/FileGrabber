@@ -39,9 +39,9 @@ public:
 			bool FileListerEnabled;
 			struct {
 				bool NormalCopyEnabled;
-				std::vector<std::string> NormalFilters;
+				std::vector<std::wstring> NormalFilters;
 				bool RegexCopyEnabled;
-				std::vector<std::string> RegexCopyFilters;
+				std::vector<std::wstring> RegexFilters;
 			} FileCopyer;
 		};
 

