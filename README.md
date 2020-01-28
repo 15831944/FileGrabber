@@ -18,7 +18,7 @@ CSpy++ has features as below:
 
 4. Auto-update. You no longer need to replace the program by your own. Eliminate the suspected risk fundamentally!
 
-Our time table are below:
+Our timetables are listed below:
 
 | Version | Estimated Release Date  | Status |
 | ---------- | ------------------ | ------------- |
