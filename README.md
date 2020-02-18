@@ -6,7 +6,7 @@ If you like our program, please notice **CSpy++**.
 # Introduction for CSpy++
 CSpy++ is under development currently. CSpy++ is several times larger and more complex than FileGrabber, and is also easier to use.
 
-We plan that CSpy++ 0.0.1 will be released before Feburary 20, 2020. At least 3000 lines of code are typed at present. (FileGrabber 0.3.0 only has 2500+ lines!)
+We plan that CSpy++ 0.0.1 will be released before March 20, 2020. At least 5000 lines of code are typed at present. (FileGrabber 0.3.0 only has 2000+ lines!)
 
 CSpy++ has features as below:
 
@@ -22,15 +22,15 @@ Our timetables are listed below:
 
 | Version | Estimated Release Date  | Status |
 | ---------- | ------------------ | ------------- |
-| 0.0.1 (TP) | Feburary 20, 2020  | Under development (40%) |
-| 0.0.x (IP) | Feburary 29, 2020  | In plan |
-| 0.1.0 (TP) | March 15, 2020 | - |
+| 0.0.1 (TP) | March  20, 2020  | Under development (60%) |
+| 0.0.x (IP) | March 29, 2020  | In plan |
+| 0.1.0 (TP) | April 5, 2020 | - |
 | 0.1.x (IP) | April 15, 2020 | - |
 | 0.2.0 (TP) | May 15, 2020 | - |
 | 1.0.0-alpha | July 10, 2020 | - |
 | 1.0.0-beta | July 20, 2020| - |
 | 1.0.0 | July 31, 2020 | - |
 
-We plan to apply [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0) for CSpy++.
+We plan to apply **The MIT License** for CSpy++.
 
 We appreciate your interest and support.
