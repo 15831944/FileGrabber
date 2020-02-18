@@ -31,6 +31,6 @@ Our timetables are listed below:
 | 1.0.0-beta | July 20, 2020| - |
 | 1.0.0 | July 31, 2020 | - |
 
-We plan to apply **The MIT License** for CSpy++.
+We plan to apply **MIT License** for CSpy++.
 
 We appreciate your interest and support.
